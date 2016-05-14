@@ -1,2 +1,7 @@
-<h1>Hello Female dogs! (And some foul language)</h1>
-<h2>test</h2>
+<?php
+
+include "php/controllers/Servlet.php";
+
+$servlet = new Servlet();
+
+$servlet->processRequest();
