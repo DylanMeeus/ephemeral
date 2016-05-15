@@ -7,6 +7,7 @@ if(!defined("SERVLET"))
 
 <h3>This is the home page.</h3>
 
+<a href="index.php?action=register">Register Here</a>
+
 <?php
 
-var_dump($this->data);

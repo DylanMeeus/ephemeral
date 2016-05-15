@@ -18,7 +18,8 @@ class Facade{
 
     }
 
-    public function testDB(){
-        return $this->database->testDB();
+    public function registerAccount($username, $password, $email, $firstName, $lastName){
+        return $this->database->registerAccount($username, $password, $email, $firstName, $lastName);
     }
+
 }

@@ -1,0 +1,16 @@
+.register-form{
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+.form-top-element{
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.form-bottom-element{
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.form-middle-element{
+    border-radius: 0;
+}
