@@ -34,9 +34,7 @@ class Database extends DatabaseConnect{
         }
 
         // Set up the sql query
-        $sql = "
-            SELECT $select FROM users WHERE $column = ?
-        ";
+        $sql = "SELECT $select FROM users WHERE $column = ?";
 
         // Connect to the database
         $this->dbConnect();

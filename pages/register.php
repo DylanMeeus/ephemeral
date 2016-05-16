@@ -38,7 +38,7 @@ if(!defined("SERVLET"))
 
         </div>
 
-        <button class="btn btn-lg btn-default btn-block" type="submit">Register</button>
+        <input class="btn btn-lg btn-default btn-block" type="submit" value="Register">
 
     </form>
 
