@@ -5,13 +5,34 @@ if(!defined("SERVLET"))
 
 ?>
 
+<!DOCTYPE html>
+<html lang="en">
 <head>
 
     <link rel="stylesheet" href="<?php echo $this->urls["css"] ?>bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="<?php echo $this->urls["css"] ?>custom.css">
 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta charset="utf-8">
+    <title>Ephemeral</title>
 </head>
 
 <body>
 
-<h1>This is the Header</h1>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">    
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Ephemeral</a>
+    </div>
+
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+	<li><a href="#">Home</a></li>
+	<li><a href="#">Forum</a></li>
+	<li><a href="#">Shoutbox</a></li> <!-- seperate shoutbox window, easier for phones -->
+	<li><a href="#">Members</a></li> <!-- list all members -->
+      </ul>
+    </div>
+  </div>
+</nav>
