@@ -7,7 +7,8 @@ if(!defined("SERVLET"))
 
 <head>
 
-    <link rel="stylesheet" href="/css/custom.css">
+    <link rel="stylesheet" href="<?php echo $this->urls["css"] ?>bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="<?php echo $this->urls["css"] ?>custom.css">
 
 </head>
 
