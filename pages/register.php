@@ -3,6 +3,10 @@
 if(!defined("SERVLET"))
     die("You may not view this page.");
 
+// If the user is logged in
+if(isset($_SESSION["user"]))
+    header("Location: index.php?action=profile");
+
 ?>
 
 <div class="container register-form">
