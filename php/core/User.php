@@ -14,7 +14,6 @@ class User{
         $personalMessage,
         $avatar,
         $roleID,
-        $password,
         $username;
 
     /**
@@ -143,22 +142,6 @@ class User{
     public function setRoleID($roleID)
     {
         $this->roleID = $roleID;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * @param mixed $password
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
     }
 
     /**

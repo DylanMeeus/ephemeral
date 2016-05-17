@@ -117,7 +117,6 @@ class Database extends DatabaseConnect{
         $user->setPersonalMessage($userInfo["personalmessage"]);
         $user->setAvatar($userInfo["avatar"]);
         $user->setRoleID($userInfo["roleid"]);
-        $user->setPassword($userInfo["password"]);
         $user->setUsername($userInfo["username"]);
 
         return $user;
