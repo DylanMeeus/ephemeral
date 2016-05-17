@@ -247,11 +247,7 @@ class Database extends DatabaseConnect{
         }
 
         // Execute the query
-        if($stmt->execute()){
-            return true;
-        }else{
-            return false;
-        }
+        return $stmt->execute();
     }
 
     private function getCookieTypeID($cookieType){

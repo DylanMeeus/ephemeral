@@ -215,12 +215,10 @@ class Servlet{
                 $this->errors[] = "A user with that username was not found. Please try again.";
                 $loadPage = "login.php.php";
                 return $loadPage;
-                break;
             case "pass_wrong":
                 $this->errors[] = "You entered an incorrect password. Please try again";
                 $loadPage = "login.php";
                 return $loadPage;
-                break;
         }
 
         // Ensure that the user object is returned by checking that it is not null

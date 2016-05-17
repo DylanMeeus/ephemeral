@@ -5,7 +5,17 @@ if(!defined("SERVLET"))
 
 class User{
 
-    private $userID, $email, $firstName, $lastName, $signature, $personalMessage, $avatar, $roleID, $password, $username;
+    private
+        $userID,
+        $email,
+        $firstName,
+        $lastName,
+        $signature,
+        $personalMessage,
+        $avatar,
+        $roleID,
+        $password,
+        $username;
 
     /**
      * @return mixed

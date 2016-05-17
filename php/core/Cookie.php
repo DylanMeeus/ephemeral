@@ -5,7 +5,11 @@ if(!defined("SERVLET"))
 
 class Cookie{
 
-    private $cookieID, $userID, $cookieTypeID, $value;
+    private
+        $cookieID,
+        $userID,
+        $cookieTypeID,
+        $value;
 
     /**
      * @return mixed
