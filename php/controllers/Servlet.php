@@ -43,15 +43,26 @@ class Servlet{
         // If there is no user session
         if(!isset($_SESSION["user"])){
 
+            $cookieName = "loggedin";
+
             // See if there is a cookie
-            if(isset($_COOKIE["loggedin"])){
+            if(isset($_COOKIE[$cookieName])){
 
                 // Check that the cookie matches in the Database
-                $dbCookie = $this->facade->getDBCookie($_COOKIE["loggedin"], "loggedin");
+                $dbCookie = $this->facade->getDBCookie($_COOKIE[$cookieName], $cookieName);
 
                 // Compare the 2 and set a session if it is approved
-                if(sha1($_COOKIE["loggedin"]) === $dbCookie->getValue()){
+                if(sha1($_COOKIE[$cookieName]) === $dbCookie->getValue()){
+
+                    // Set the session
                     $_SESSION["user"] = $this->facade->setUser($dbCookie->getUserID());
+
+                    // Set a new cookie
+                    $cookieValue = microtime();
+                    setcookie($cookieName, $cookieValue, time() + 60 * 60 * 24 * 30);
+
+                    // Set it in the database too
+                    $this->facade->setDBCookie($cookieValue, $_SESSION["user"]->getUserID(), $cookieName);
                 }
             }
         }
