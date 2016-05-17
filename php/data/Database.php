@@ -36,7 +36,7 @@ class Database extends DatabaseConnect{
         }
 
         // Set up the sql query
-        $sql = "SELECT $select FROM users WHERE $column = ?";
+        $sql = "SELECT $select FROM users WHERE $column = ?;";
 
         // Connect to the database
         $this->dbConnect();
@@ -73,7 +73,7 @@ class Database extends DatabaseConnect{
         // Set up an SQL to input the user to the DB
         $sql = "
             INSERT INTO users (username, password, email, firstname, lastname)
-            VALUES(?,?,?,?,?)
+            VALUES(?,?,?,?,?);
         ";
 
         // Connect to the DB
@@ -158,7 +158,7 @@ class Database extends DatabaseConnect{
         }
 
         // See if the given cookie exists
-        $sql = "SELECT * FROM cookies WHERE value = ? AND cookietypeid = ?";
+        $sql = "SELECT * FROM cookies WHERE value = ? AND cookietypeid = ?;";
 
         $this->dbConnect();
 
@@ -198,7 +198,7 @@ class Database extends DatabaseConnect{
         }
 
         // See if the user already has a cookie of this type
-        $sql = "SELECT * FROM cookies WHERE userid = ? AND cookietypeid = ?";
+        $sql = "SELECT * FROM cookies WHERE userid = ? AND cookietypeid = ?;";
 
         $this->dbConnect();
 
@@ -218,7 +218,7 @@ class Database extends DatabaseConnect{
             $sql = "
                 UPDATE cookies
                 SET value=?
-                WHERE userid=? AND cookietypeid=?
+                WHERE userid=? AND cookietypeid=?;
             ";
 
             // Prepare
@@ -233,7 +233,7 @@ class Database extends DatabaseConnect{
             // SQL query to insert the cookie info
             $sql = "
                 INSERT INTO cookies(userid, cookietypeid, value)
-                VALUES(?, ?, ?)
+                VALUES(?, ?, ?);
             ";
 
             // Prepare the stmt
@@ -252,7 +252,7 @@ class Database extends DatabaseConnect{
     private function getCookieTypeID($cookieType){
 
         // SQL to get the cookie type ID
-        $sql = "SELECT * FROM cookietypes WHERE cookietype = ?";
+        $sql = "SELECT * FROM cookietypes WHERE cookietype = ?;";
 
         // Connect to the DB
         $this->dbConnect();
