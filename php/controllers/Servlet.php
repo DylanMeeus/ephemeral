@@ -40,6 +40,33 @@ class Servlet{
         // Fire up a session right away
         session_start();
 
+        // If there is no user session
+        if(!isset($_SESSION["user"])){
+
+            $cookieName = "loggedin";
+
+            // See if there is a cookie
+            if(isset($_COOKIE[$cookieName])){
+
+                // Check that the cookie matches in the Database
+                $dbCookie = $this->facade->getDBCookie($_COOKIE[$cookieName], $cookieName);
+
+                // Compare the 2 and set a session if it is approved
+                if(sha1($_COOKIE[$cookieName]) === $dbCookie->getValue()){
+
+                    // Set the session
+                    $_SESSION["user"] = $this->facade->setUser($dbCookie->getUserID());
+
+                    // Set a new cookie
+                    $cookieValue = microtime();
+                    setcookie($cookieName, $cookieValue, time() + 60 * 60 * 24 * 30);
+
+                    // Set it in the database too
+                    $this->facade->setDBCookie($cookieValue, $_SESSION["user"]->getUserID(), $cookieName);
+                }
+            }
+        }
+
         // Page to load, set as nothing to begin with
         $loadPage = "";
 
@@ -85,6 +112,15 @@ class Servlet{
             case "login":
                 $loadPage = $this->login();
                 break;
+            case "loginaccount":
+                $loadPage = $this->loginAccount();
+                break;
+            case "profile":
+                $loadPage = $this->profile();
+                break;
+            case "logout":
+                $loadPage = $this->logout();
+                break;
             // Another default, just for consistency and avoiding any potential errors ( I don't know how they'd happen but ... this is coding! )
             default:
                 $loadPage = $this->home();
@@ -125,6 +161,11 @@ class Servlet{
         return $loadPage;
     }
 
+    private function profile(){
+        $loadPage = "profile.php";
+        return $loadPage;
+    }
+
     /**
      * Methods that actually do things
      */
@@ -155,8 +196,70 @@ class Servlet{
                 $this->notifications[] = 'The User Account was created, you may now login.';
                 break;
         }
-$this->data = $account;
+
         $loadPage = "registeraccount.php";
         return $loadPage;
+    }
+
+    private function loginAccount(){
+
+        // Get the user / pass etc.
+        $username = $_POST["username"];
+        $password = $_POST["password"];
+        @$rememberMe = $_POST["rememberme"];
+
+        $user = $this->facade->loginAccount($username, $password);
+
+        switch($user){
+            case "user_not_found":
+                $this->errors[] = "A user with that username was not found. Please try again.";
+                $loadPage = "login.php.php";
+                return $loadPage;
+            case "pass_wrong":
+                $this->errors[] = "You entered an incorrect password. Please try again";
+                $loadPage = "login.php";
+                return $loadPage;
+        }
+
+        // Ensure that the user object is returned by checking that it is not null
+        if($user != null) {
+
+            // Set the session userinfo
+            $_SESSION["user"] = $user;
+
+            // Set a loggedin cookie if remember me was checked
+            if(isset($rememberMe)){
+                $cookieName = "loggedin";
+                $cookieValue = microtime();
+                setcookie($cookieName, $cookieValue, time() + 60 * 60 * 24 * 30);
+
+                // Set it in the database too
+                $this->facade->setDBCookie($cookieValue, $user->getUserID(), $cookieName);
+            }
+
+            // Send the user to the profile page
+            $loadPage = "profile.php";
+            return $loadPage;
+        }
+    }
+
+    private function logout(){
+
+        // Log the user out if they are logged in
+        if(isset($_SESSION["user"])){
+
+            $cookieName = "loggedin";
+            $cookieValue = "";
+
+            // Comment out these 2 lines to debug / test cookies remembering you
+            setcookie($cookieName, $cookieValue, time() - 3600);
+            $this->facade->setDBCookie($cookieName, $_SESSION["user"]->getUserID(), "");
+
+            session_destroy();
+        }
+
+        // Send the user to the homepage
+        $nextPage = "home.php";
+        return $nextPage;
     }
 }

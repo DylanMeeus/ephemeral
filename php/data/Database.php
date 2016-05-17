@@ -5,6 +5,8 @@ if(!defined("SERVLET"))
 
 // Required files
 require_once "php/data/DatabaseConnect.php";
+require_once "php/factories/UserFactory.php";
+require_once "php/factories/CookieFactory.php";
 
 class Database extends DatabaseConnect{
 
@@ -34,7 +36,7 @@ class Database extends DatabaseConnect{
         }
 
         // Set up the sql query
-        $sql = "SELECT $select FROM users WHERE $column = ?";
+        $sql = "SELECT $select FROM users WHERE $column = ?;";
 
         // Connect to the database
         $this->dbConnect();
@@ -68,13 +70,10 @@ class Database extends DatabaseConnect{
             return "user_exists";
         }
 
-        // Hash the password
-        $password = password_hash($password, PASSWORD_DEFAULT);
-
         // Set up an SQL to input the user to the DB
         $sql = "
             INSERT INTO users (username, password, email, firstname, lastname)
-            VALUES(?,?,?,?,?)
+            VALUES(?,?,?,?,?);
         ";
 
         // Connect to the DB
@@ -103,4 +102,198 @@ class Database extends DatabaseConnect{
         return "user_created";
     }
 
+    public function setUser($userID){
+
+        // Set an account from the user ID
+        $userInfo = $this->getUserInfo(0, "userid", $userID);
+
+        $user = UserFactory::create();
+        $userInfo = $userInfo[0];
+        $user->setUserID($userInfo["userid"]);
+        $user->setEmail($userInfo["email"]);
+        $user->setFirstName($userInfo["firstname"]);
+        $user->setLastName($userInfo["lastname"]);
+        $user->setSignature($userInfo["signature"]);
+        $user->setPersonalMessage($userInfo["personalmessage"]);
+        $user->setAvatar($userInfo["avatar"]);
+        $user->setRoleID($userInfo["roleid"]);
+        $user->setUsername($userInfo["username"]);
+
+        return $user;
+    }
+
+    public function loginAccount($username, $password){
+
+        // First off, see if a user with this username exists
+        // Grab the password from the user if they do, so we can compare it with the entered one. 2 birds, one large rock.
+        $userInfo = $this->getUserInfo(0, "username", $username);
+
+        // If it is empty, then the user does not exist, so return that
+        if(empty($userInfo)){
+            return "user_not_found";
+        }
+
+        // If we get this far, we now have a hashed password to compare, so let's compare it
+        if(password_verify($password, $userInfo[0]["password"])){
+            // Password matches, so log the user in
+            $user = $this->setUser($userInfo[0]["userid"]);
+
+            // Return the user object
+            return $user;
+        }else{
+            return "pass_wrong";
+        }
+    }
+
+    public function getDBCookie($token, $cookieType){
+
+        // Hashing is done in the Facade
+
+        // Get the cookie type ID
+        $cookieTypeID = $this->getCookieTypeID($cookieType);
+
+        // If typeID is false, no type ID is set for this cookie yet
+        if(!$cookieTypeID){
+            return "no_cookie_id";
+        }
+
+        // See if the given cookie exists
+        $sql = "SELECT * FROM cookies WHERE value = ? AND cookietypeid = ?;";
+
+        $this->dbConnect();
+
+        $stmt = $this->con->prepare($sql);
+
+        $stmt->bindParam(1, $token);
+        $stmt->bindParam(2, $cookieTypeID);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $results = $stmt->fetchAll();
+
+        $this->dbDisconnect();
+
+        // Return the cookie info in the form of an object
+        $cookieInfo = $results[0];
+
+        $cookie = CookieFactory::create();
+
+        $cookie->setCookieID($cookieInfo["cookieid"]);
+        $cookie->setUserID($cookieInfo["userid"]);
+        $cookie->setCookieTypeID($cookieInfo["cookietypeid"]);
+        $cookie->setValue($cookieInfo["value"]);
+
+        return $cookie;
+    }
+
+    public function setDBCookie($token, $userID, $cookieType){
+
+        // Token is hashed in the Facade
+        // Get the cookie type ID
+        $cookieTypeID = $this->getCookieTypeID($cookieType);
+
+        // If typeID is false, no type ID is set for this cookie yet
+        if(!$cookieTypeID){
+            return "no_cookie_id";
+        }
+
+        // See if the user already has a cookie of this type
+        $sql = "SELECT * FROM cookies WHERE userid = ? AND cookietypeid = ?;";
+
+        $this->dbConnect();
+
+        $stmt = $this->con->prepare($sql);
+
+        $stmt->bindParam(1, $userID);
+        $stmt->bindParam(2, $cookieTypeID);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $results = $stmt->fetchAll();
+
+        // If there is an existing one, we just want to update it rather than creating a new one
+        if(!empty($results)){
+
+            // Update query rather than insert
+            $sql = "
+                UPDATE cookies
+                SET value=?
+                WHERE userid=? AND cookietypeid=?;
+            ";
+
+            // Prepare
+            $stmt = $this->con->prepare($sql);
+
+            // Bind the params
+            $stmt->bindParam(1, $token);
+            $stmt->bindParam(2, $userID);
+            $stmt->bindParam(3, $cookieTypeID);
+        }else{
+
+            // SQL query to insert the cookie info
+            $sql = "
+                INSERT INTO cookies(userid, cookietypeid, value)
+                VALUES(?, ?, ?);
+            ";
+
+            // Prepare the stmt
+            $stmt = $this->con->prepare($sql);
+
+            // Bind the params
+            $stmt->bindParam(1, $userID);
+            $stmt->bindParam(2, $cookieTypeID);
+            $stmt->bindParam(3, $token);
+        }
+
+        // Execute the query
+        return $stmt->execute();
+    }
+
+    private function getCookieTypeID($cookieType){
+
+        // SQL to get the cookie type ID
+        $sql = "SELECT * FROM cookietypes WHERE cookietype = ?;";
+
+        // Connect to the DB
+        $this->dbConnect();
+
+        // Prepare the stmt
+        $stmt = $this->con->prepare($sql);
+
+        // Bind the param
+        $stmt->bindParam(1, $cookieType);
+
+        // Execute & fetch
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $results = $stmt->fetchAll();
+
+        // Disconnect
+        $this->dbDisconnect();
+
+        // Return the ID
+        return !empty($results) ? $results[0]["cookietypeid"] : false;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
