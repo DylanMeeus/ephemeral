@@ -23,6 +23,9 @@ class Servlet{
 
     public function __construct(){
 
+        // Fire up a session right away
+        session_start();
+
         // Again, no comment needed but hey, I'm giving you a comment: you smell awesome today.
         $this->facade = new Facade();
 
@@ -36,9 +39,6 @@ class Servlet{
     }
 
     public function processRequest(){
-
-        // Fire up a session right away
-        session_start();
 
         // If there is no user session
         if(!isset($_SESSION["user"])){
