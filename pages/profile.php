@@ -194,8 +194,6 @@ if(isset($_SESSION["user"])){
                 <li data-action="cropped-profile-picture">View Image</li>
             </ul>
 
-        <div id="current-avatar"><?php  ?></div>
-
     <?php
     }
 
