@@ -8,6 +8,3 @@ if(!defined("SERVLET"))
 </div>
 </div>
 </div>
-
-
-<script src="<?php echo $this->urls["js"] ?>jcrop/jquery.Jcrop.min.js"></script>

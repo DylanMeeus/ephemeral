@@ -5,6 +5,8 @@ if(!defined("SERVLET"))
 
 require_once "php/data/Database.php";
 require_once "php/factories/DatabaseFactory.php";
+require_once "php/data/File.php";
+require_once "php/factories/FileFactory.php";
 
 class Facade{
 
@@ -15,6 +17,7 @@ class Facade{
     public function __construct(){
 
         $this->database = DatabaseFactory::create();
+        $this->file = FileFactory::create();
 
     }
 
@@ -41,6 +44,23 @@ class Facade{
 
     public function setUser($userID){
         return $this->database->setUser($userID);
+    }
+
+    public function changePassword($username, $oldPassword, $newPassword){
+        $newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        return $this->database->changePassword($username, $oldPassword, $newPassword);
+    }
+
+    public function uploadProfilePicture($coordString, $imgSrc){
+        return $this->file->uploadProfilePicture($coordString, $imgSrc);
+    }
+
+    public function uploadImage($file){
+        return $this->file->uploadImage($file);
+    }
+
+    public function updatePersonalMessage($username, $personalMessage){
+        return $this->database->updatePersonalMessage($username, $personalMessage);
     }
 
 }

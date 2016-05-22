@@ -27,14 +27,14 @@ body {
 .text-white{
     color: white;
 }
-#password-result{
+.modal-positive-result{
     background-color: green;
     color: white;
     width: 100%;
     text-align: center;
     display: none;
 }
-#password-result-negative{
+.modal-negative-result{
     background-color: red;
     color: white;
     width: 100%;
@@ -186,4 +186,7 @@ body {
 }
 .navbar-wrapper .navbar .container {
     width: auto;
+}
+#current-avatar{
+    display: none;
 }

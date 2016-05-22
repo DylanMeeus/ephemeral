@@ -11,5 +11,7 @@ if(!defined("SERVLET"))
 
     <script src="<?php echo $this->urls["js"] ?>jquery.min.js"></script>
     <script src="<?php echo $this->urls["js"] ?>bootstrap/bootstrap.min.js"></script>
+    <script src="<?php echo $this->urls["js"] ?>jcrop/jquery.Jcrop.js"></script>
+    <script src="<?php echo $this->urls["js"] ?>profile.js"></script>
 
 </footer>

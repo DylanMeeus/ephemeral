@@ -121,7 +121,26 @@ class Servlet{
             case "logout":
                 $loadPage = $this->logout();
                 break;
-            // Another default, just for consistency and avoiding any potential errors ( I don't know how they'd happen but ... this is coding! )
+            case "uploadprofilepicture":
+                $redirect = $header = $footer = false;
+                $this->uploadProfilePicture();
+                break;
+            case "uploadimage":
+                $redirect = $header = $footer = false;
+                $this->uploadImage();
+                break;
+            case "changepassword":
+                $redirect = $header = $footer = false;
+                $this->changePassword();
+                break;
+            case "getavatar":
+                $redirect = $header = $footer = false;
+                $this->getAvatar();
+                break;
+            case "changepersonalmessage":
+                $redirect = $header = $footer = false;
+                $this->setPersonalMessage();
+                break;
             default:
                 $loadPage = $this->home();
         }
@@ -169,6 +188,55 @@ class Servlet{
     /**
      * Methods that actually do things
      */
+
+    private function changePassword(){
+
+        // If the form data is set
+        if(isset($_POST["oldpassword"])){
+
+            // Grab the post data
+            $oldPassword = $_POST["oldpassword"];
+            $newPassword = $_POST["newpassword"];
+            $repeatNewPassword = $_POST["repeatnewpassword"];
+
+            if($newPassword != $repeatNewPassword){
+                echo "no_password_match";
+                return true;
+            }
+
+            $result = $this->facade->changePassword($_SESSION["user"]->getUsername(), $oldPassword, $newPassword);
+
+            echo $result;
+        }else{
+            return false;
+        }
+    }
+
+    private function uploadProfilePicture(){
+
+        // Grab the post data
+        if(!empty($_POST["coordString"]) && !empty($_POST["imgSrc"])){
+            $coordString = $_POST["coordString"];
+            $imgSrc = $_POST["imgSrc"];
+
+            // Upload the profile picture (This also updates the avatar in the DB)
+            $results = $this->facade->uploadProfilePicture($coordString, $imgSrc);
+
+            $this->updateSession();
+
+            echo $results;
+        }else{
+            echo "Stuff was not filled in...";
+        }
+    }
+
+    private function uploadImage(){
+        // Make sure a file is there, then upload the image and display whatever is returned (should be an image resource)
+        if(!empty($_FILES)){
+            $image = $this->facade->uploadImage($_FILES);
+            echo $image;
+        }
+    }
 
     private function registerAccount(){
 
@@ -261,5 +329,54 @@ class Servlet{
         // Send the user to the homepage
         $nextPage = "home.php";
         return $nextPage;
+    }
+
+    /**
+     * Method to return the user's Avatar through to Javascript
+     */
+    private function getAvatar(){
+
+        // If the session is set
+        if(isset($_SESSION["user"])){
+            // Return it
+            echo $_SESSION["user"]->getAvatar() . "-cropped.jpg";
+        }
+    }
+
+    private function setPersonalMessage(){
+
+        // Update the current user's personal message
+        // Get the new message
+        if(isset($_POST)){
+            $personalMessage = $_POST["pm"];
+
+            // Send it to the database!
+            $result = $this->facade->updatePersonalMessage($_SESSION["user"]->getUsername(), $personalMessage);
+
+            // If it worked
+            if($result){
+
+                // Update the session
+                $_SESSION["user"]->setPersonalMessage($personalMessage);
+
+                // Return success message for jQuery
+                echo $_SESSION["user"]->getPersonalMessage();
+            }else{
+                echo 0;
+            }
+        }
+    }
+
+    /**
+     * Methods to be called from within this file only
+     */
+    // This method is to update the entire session in the case of not having a specific return to put in the Session with a setter
+    private function updateSession(){
+
+        // Get the USER ID
+        $userID = $this->facade->setUser($_SESSION["user"]->getUserID());
+
+        // Update the current session with the new data
+        $_SESSION["user"] = $userID;
     }
 }

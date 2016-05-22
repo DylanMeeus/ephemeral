@@ -15,7 +15,7 @@ class Database extends DatabaseConnect{
         parent::__construct();
     }
 
-    public function getUserInfo($returns, $column, $value){
+    public function getUserInfo($returns, $column, $columnValue){
 
         // String of things we want to get from the database
         // If $returns is 0, we pull everything
@@ -29,7 +29,7 @@ class Database extends DatabaseConnect{
             if (is_array($returns)) {
 
                 // Implode the array in to a string, delimited with commas and surrounded with parentheses.
-                $select = "(" . implode(", ", $returns) . ")";
+                $select = implode(", ", $returns);
             } else {
                 $select = "($returns)";
             }
@@ -43,7 +43,7 @@ class Database extends DatabaseConnect{
 
         // Prepare, bind and execute the query
         $stmt = $this->con->prepare($sql);
-        $stmt->bindParam(1, $value);
+        $stmt->bindParam(1, $columnValue);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
@@ -246,7 +246,13 @@ class Database extends DatabaseConnect{
         }
 
         // Execute the query
-        return $stmt->execute();
+        $result = $stmt->execute();
+
+        // Disconnect
+        $this->dbDisconnect();
+
+        // Return it
+        return $result;
     }
 
     private function getCookieTypeID($cookieType){
@@ -273,6 +279,117 @@ class Database extends DatabaseConnect{
 
         // Return the ID
         return !empty($results) ? $results[0]["cookietypeid"] : false;
+    }
+
+    public function changePassword($username, $oldPassword, $newPassword){
+
+        // Grab the current password from the database
+        $currentPassword = $this->getUserInfo("password", "username", $username)[0]["password"];
+
+        // See if the old password provided by the user matches the one in the database
+        if(password_verify($oldPassword, $currentPassword)){
+
+            // Here they matched so insert the new password (hashed in the facade)
+            $sql = "
+                UPDATE users
+                SET password = ?
+                WHERE username = ?;
+            ";
+
+            // Connect, prepare, execute, disconnect
+            $this->dbConnect();
+
+            $stmt = $this->con->prepare($sql);
+
+            $stmt->bindParam(1, $newPassword);
+            $stmt->bindParam(2, $username);
+
+            $result = $stmt->execute();
+
+            $this->dbDisconnect();
+
+            if($result){
+                return "password_changed";
+            }
+            }else{
+                return "no_old_password_match";
+            }
+        }
+
+    public function updateAvatar($username, $imageName){
+
+        // SQL query to execute it
+        $sql = "
+            UPDATE users
+            SET avatar = ?
+            WHERE username = ?;
+        ";
+
+        // Connect to the DB
+        $this->dbConnect();
+
+        // Prepare the statement
+        $stmt = $this->con->prepare($sql);
+
+        // Bind the vals
+        $stmt->bindParam(1, $imageName);
+        $stmt->bindParam(2, $username);
+
+        // Execute
+        $result = $stmt->execute();
+
+        $this->dbDisconnect();
+
+        return $result;
+    }
+
+    public function updateFullAvatar($username, $imageName){
+
+        // SQL query to execute it
+        $sql = "
+            UPDATE users
+            SET fullavatar = ?
+            WHERE username = ?;
+        ";
+
+        // Connect to the DB
+        $this->dbConnect();
+
+        // Prepare the statement
+        $stmt = $this->con->prepare($sql);
+
+        // Bind the vals
+        $stmt->bindParam(1, $imageName);
+        $stmt->bindParam(2, $username);
+
+        // Execute
+        $result = $stmt->execute();
+
+        $this->dbDisconnect();
+
+        return $result;
+    }
+
+    public function updatePersonalMessage($username, $personalMessage){
+
+        $sql = "
+            UPDATE users
+            SET personalmessage = ?
+            WHERE username = ?;
+        ";
+
+        $this->dbConnect();
+
+        $stmt = $this->con->prepare($sql);
+
+        $stmt->bindParam(1, $personalMessage);
+        $stmt->bindParam(2, $username);
+
+        $result = $stmt->execute();
+
+        $this->dbDisconnect();
+
+        return $result;
     }
 }
 

@@ -15,7 +15,7 @@ if(isset($_SESSION["user"])){
     }
 
     // Load the Dashboard header
-    require_once "pages/templates/headerDashboard.php";
+    require_once "pages/templates/headerdashboard.php";
 
     if(isset($_GET["username"])){
         /**
@@ -28,49 +28,54 @@ if(isset($_SESSION["user"])){
          */
         // Vars that will be used throughout
         $username = $_SESSION["user"]->getUsername();
-        $profilePicture = "images/$username-profile-cropped.jpg";
 
-        if(file_exists($profilePicture)){
-            $profilePictureExists = true;
-        }else{
-            $profilePictureExists = false;
-        }
         ?>
 
         <div class="row placeholders">
             <div class="col-xs-6 col-sm-3 placeholder">
-                <img src="<?php echo $profilePictureExists ? $profilePicture : "" ?>" width="150" height="150" class="img-responsive" alt="Profile Picture" id="profile-picture">
-                         <h4>Profile Picture</h4>
-                         <span class="text-muted">
-                             <a class="hover-pointer" data-toggle="modal" data-target="#profile-picture-modal">
-                Change Picture
-            </a>
-                         </span>
-                     </div>
-                 </div>
-
-                <div class="jumbotron dashboard-title">
-                    <h3>
-            My Profile
-            </h3>
+                <img src="<?php echo $_SESSION["user"]->getAvatar() . "-cropped.jpg" ?>" width="150" height="150" class="img-responsive" alt="Profile Picture" id="profile-picture">
+                <br><br>
+                <span class="text-muted">
+                    <a class="hover-pointer" data-toggle="modal" data-target="#profile-picture-modal">
+                        <button type="button" class="btn btn-default">Change Profile Picture</button>
+                    </a>
+                </span>
+            </div>
+            <div class="col-xs-6 col-sm-4 placeholder">
+                <div style="height: 150px">
+                    <h2><?php echo $_SESSION["user"]->getFirstName() . " " . $_SESSION["user"]->getLastName() ?></h2>
+                    <h3 id="personal-message"><?php echo $_SESSION["user"]->getPersonalMessage() ?></h3>
                 </div>
+                <span class="text-muted">
+                    <a class="hover-pointer" data-toggle="modal" data-target="#pm-modal">
+                        <button type="button" class="btn btn-default" id="change-pm-modal">Change Personal Message</button>
+                    </a>
+                </span>
+            </div>
+        </div>
 
-                <h2 class="sub-header">Your Information</h2>
+        <div class="jumbotron dashboard-title">
+            <h3>
+                My Profile
+            </h3>
+        </div>
 
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>Password</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td><?php echo $_SESSION["user"]->getUsername(); ?></td>
-                                <td>
-                                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#password-modal">
-                                        Change Password
+        <h2 class="sub-header">Your Information</h2>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Password</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><?php echo $_SESSION["user"]->getUsername(); ?></td>
+                    <td>
+                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#password-modal">
+                            Change Password
                                     </button>
                                 </td>
                             </tr>
@@ -114,13 +119,13 @@ if(isset($_SESSION["user"])){
                                 <label for="repeatnewpassword" class="sr-only">Repeat New Password</label>
                                 <input name="repeatnewpassword" id="repeatnewpassword" type="password" class="form-control" placeholder="Repeat New Password" autocomplete="off" required>
                                 <br />
-                                <button class="btn btn-default btn-primary btn-block" type="submit">Change Password</button>
+                                <input class="btn btn-default btn-primary btn-block" type="submit" value="Change Password">
                             </form>
                         </div>
-                        <div id="password-result"></div>
-                        <div id="password-result-negative"></div>
+                        <div id="password-result" class="modal-positive-result"></div>
+                        <div id="password-result-negative" class="modal-negative-result"></div>
                         <div class="modal-footer">
-                            <button type="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>
 
@@ -140,33 +145,62 @@ if(isset($_SESSION["user"])){
                             <br />
                             <button id="image-upload" class="btn btn-default btn-primary btn-block">Crop this Image</button>
                             <br />
-                            <img src="" id="image-profile" width="300px" style="display: none"/>
+                            <div id="image-profile-parent">
+                                <img src="" id="image-profile" style="display: none; max-width: 500px;"/>
+                            </div>
                             <br />
                             <div id="coords" class="hidden"></div>
                             <div id="coords2" class="hidden"></div>
                             <button id="send-coords" style="display: none">Change my Profile Picture!</button>
                         </div>
                         <div class="modal-footer">
-                            <button type="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
             </div>
+
+        <!-- Personal Message Modal -->
+        <div id="pm-modal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Change your Personal Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="changepersonalmessage">
+                            <label for="pm" class="sr-only">Personal Message</label>
+                            <input name="pm" id="pm" type="text" class="form-control" placeholder="Personal Message" autocomplete="off"
+                                   value="<?php echo $_SESSION["user"]->getPersonalMessage() ?>" required autofocus>
+                            <br />
+                            <input class="btn btn-default btn-primary btn-block" type="submit" value="Update Personal Message">
+                        </form>
+                    </div>
+                    <div id="pm-result-positive" class="modal-positive-result"></div>
+                    <div id="pm-result-negative" class="modal-negative-result"></div>
+                    <div class="modal-footer" id="pm-result">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
 
             <!-- Context Menus -->
 
             <!-- Profile Picture Context Menu -->
             <ul class="_contextmenu" id="_contextmenu-profile-picture">
                 <li data-action="change-profile-picture">Change Profile Picture</li>
-                <li data-action="full-profile-picture">See full-sized image</li>
-                <li data-action="cropped-profile-picture">See cropped image</li>
+                <li data-action="cropped-profile-picture">View Image</li>
             </ul>
+
+        <div id="current-avatar"><?php  ?></div>
 
     <?php
     }
 
     // Load the Dashboard footer
-    require_once "pages/templates/footerDashboard.php";
+    require_once "pages/templates/footerdashboard.php";
 
     // Otherwise, the user is not logged in, so send them to the homepage
     }else{
