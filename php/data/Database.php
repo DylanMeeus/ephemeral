@@ -116,6 +116,7 @@ class Database extends DatabaseConnect{
         $user->setSignature($userInfo["signature"]);
         $user->setPersonalMessage($userInfo["personalmessage"]);
         $user->setAvatar($userInfo["avatar"]);
+        $user->setFullAvatar($userInfo["fullavatar"]);
         $user->setRoleID($userInfo["roleid"]);
         $user->setUsername($userInfo["username"]);
 
@@ -340,7 +341,11 @@ class Database extends DatabaseConnect{
 
         $this->dbDisconnect();
 
-        return $result;
+        if($result){
+            return $imageName . "-cropped.jpg";
+        }else{
+            return false;
+        }
     }
 
     public function updateFullAvatar($username, $imageName){
@@ -367,7 +372,11 @@ class Database extends DatabaseConnect{
 
         $this->dbDisconnect();
 
-        return $result;
+        if($result){
+            return $imageName;
+        }else{
+            return false;
+        }
     }
 
     public function updatePersonalMessage($username, $personalMessage){

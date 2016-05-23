@@ -13,6 +13,7 @@ class User{
         $signature,
         $personalMessage,
         $avatar,
+        $fullAvatar,
         $roleID,
         $username;
 
@@ -126,6 +127,22 @@ class User{
     public function setAvatar($avatar)
     {
         $this->avatar = $avatar;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFullAvatar()
+    {
+        return $this->fullAvatar;
+    }
+
+    /**
+     * @param mixed $fullAvatar
+     */
+    public function setFullAvatar($fullAvatar)
+    {
+        $this->fullAvatar = $fullAvatar;
     }
 
     /**

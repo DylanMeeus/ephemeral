@@ -38,9 +38,8 @@ class File{
             move_uploaded_file($image["tmp_name"], $fileName);
 
             // Now delete the old ones
-            $avatars = $this->database->getUserInfo(array("avatar","fullavatar"), "username", $username)[0];
-            $oldAvatar = $avatars["avatar"];
-            $oldFullAvatar = $avatars["fullavatar"];
+            $oldAvatar = $_SESSION["user"]->getAvatar();
+            $oldFullAvatar = $_SESSION["user"]->getFullAvatar();
             if(file_exists($oldAvatar)){
                 unlink($oldAvatar);
             }if(file_exists($oldFullAvatar)){
@@ -48,7 +47,7 @@ class File{
             }
 
             // Update the full avatar column
-            $this->database->updateFullAvatar($username, $fileName);
+            //$this->database->updateFullAvatar($username, $fileName);
 
             // Return the new filename
             return $fileName;
@@ -119,14 +118,11 @@ class File{
         $mask = "$username-*.jpg-cropped.jpg";
         array_map("unlink", glob("images/profile/" . $mask));
 
-        // Update the avatar column for this user in the DB
-        $this->database->updateAvatar($username, $imgSrc);
-
         // Create that shit!
         imagejpeg($imgTarget, $newPath);
 
         // Return the path
-        return $newPath;
+        return $imgSrc;
     }
 }
 

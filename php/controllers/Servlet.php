@@ -216,14 +216,18 @@ class Servlet{
 
         // Grab the post data
         if(!empty($_POST["coordString"]) && !empty($_POST["imgSrc"])){
+
+            // Get the POST data
             $coordString = $_POST["coordString"];
             $imgSrc = $_POST["imgSrc"];
 
             // Upload the profile picture (This also updates the avatar in the DB)
-            $results = $this->facade->uploadProfilePicture($coordString, $imgSrc);
+            $results = $this->facade->updateAvatar($coordString, $imgSrc);
 
+            // Update the session to reflect the changes
             $this->updateSession();
 
+            // Display the results for jQuery
             echo $results;
         }else{
             echo "Stuff was not filled in...";
@@ -233,7 +237,14 @@ class Servlet{
     private function uploadImage(){
         // Make sure a file is there, then upload the image and display whatever is returned (should be an image resource)
         if(!empty($_FILES)){
-            $image = $this->facade->uploadImage($_FILES);
+
+            // Get the image name from the model (Also updates large image name in DB)
+            $image = $this->facade->updateFullAvatar($_FILES);
+
+            // Update the session to reflect the changes
+            $this->updateSession();
+
+            // Display the results for jQuery
             echo $image;
         }
     }

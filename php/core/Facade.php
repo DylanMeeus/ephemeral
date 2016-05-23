@@ -55,12 +55,23 @@ class Facade{
         return $this->file->uploadProfilePicture($coordString, $imgSrc);
     }
 
-    public function uploadImage($file){
-        return $this->file->uploadImage($file);
-    }
-
     public function updatePersonalMessage($username, $personalMessage){
         return $this->database->updatePersonalMessage($username, $personalMessage);
     }
 
+    public function updateFullAvatar($files){
+        return $this->database->updateFullAvatar(
+            $_SESSION["user"]->getUsername(),
+            $this->file->uploadImage($files)
+        );
+    }
+
+    public function updateAvatar($coordString, $imgSrc){
+        return $this->database->updateAvatar(
+            $_SESSION["user"]->getUsername(),
+            $this->file->uploadProfilePicture(
+                $coordString, $imgSrc
+            )
+        );
+    }
 }
