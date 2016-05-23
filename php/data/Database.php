@@ -319,6 +319,11 @@ class Database extends DatabaseConnect{
 
     public function updateAvatar($username, $imageName){
 
+        // If image name was returned as "no-work", then send that back to jQuery
+        if($imageName == "no-work"){
+            return $imageName;
+        }
+
         // SQL query to execute it
         $sql = "
             UPDATE users
@@ -349,6 +354,11 @@ class Database extends DatabaseConnect{
     }
 
     public function updateFullAvatar($username, $imageName){
+
+        // If image name was returned as "not-image", then send that back to jQuery
+        if($imageName == "not-image"){
+            return $imageName;
+        }
 
         // SQL query to execute it
         $sql = "
