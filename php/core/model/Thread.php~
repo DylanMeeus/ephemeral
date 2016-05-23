@@ -1,0 +1,22 @@
+<?php
+
+
+if(!defined("SERVLET"))
+    die("You may not view this page.");
+
+
+class Thread{
+
+
+    private $threadid;
+    private $subject;
+    private $ownerid;
+    private $categoryid;
+
+
+}
+
+
+
+
+?>
