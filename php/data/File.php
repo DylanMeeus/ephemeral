@@ -1,15 +1,6 @@
 <?php
 
-require_once "php/factories/DatabaseFactory.php";
-
 class File{
-
-    private $database = null;
-
-    public function __construct(){
-
-        $this->database = DatabaseFactory::create();
-    }
 
     public function uploadImage($file){
 
