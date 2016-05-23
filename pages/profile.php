@@ -171,7 +171,7 @@ if(isset($_SESSION["user"])){
                         <form id="changepersonalmessage">
                             <label for="pm" class="sr-only">Personal Message</label>
                             <input name="pm" id="pm" type="text" class="form-control" placeholder="Personal Message" autocomplete="off"
-                                   value="<?php echo $_SESSION["user"]->getPersonalMessage() ?>" required autofocus>
+                                   value="<?php echo htmlspecialchars($_SESSION["user"]->getPersonalMessage()) ?>" required autofocus>
                             <br />
                             <input class="btn btn-default btn-primary btn-block" type="submit" value="Update Personal Message">
                         </form>
