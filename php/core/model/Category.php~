@@ -1,0 +1,26 @@
+
+<?php
+
+
+
+
+// ORM for categories
+
+class Category
+{
+
+private $name;
+private $id;
+
+public function __construct()
+{
+
+}
+
+// following the C++ style here, to make it a bit more terse.
+public function getName(){ return $this->name; }
+public function setName(name){ $this->name=name; }
+
+
+
+}
