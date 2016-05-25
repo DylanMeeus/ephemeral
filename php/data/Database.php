@@ -3,7 +3,6 @@
 if(!defined("SERVLET"))
     die("You may not view this page.");
 
-// Required files
 require_once "php/data/DatabaseConnect.php";
 require_once "php/factories/UserFactory.php";
 require_once "php/factories/CookieFactory.php";
@@ -11,7 +10,6 @@ require_once "php/helper/debughelper.php";
 
 class Database extends DatabaseConnect{
 
-    // Constructor from parent
     public function __construct(){
         parent::__construct();
     }
@@ -26,7 +24,6 @@ class Database extends DatabaseConnect{
         // Otherwise, it contains something
         }else {
 
-            // If it is an array...
             if (is_array($returns)) {
 
                 // Implode the array in to a string, delimited with commas and surrounded with parentheses.
@@ -95,6 +92,7 @@ class Database extends DatabaseConnect{
         }
         catch(Exception $e){
             DebugHelper::log($e->getMessage());
+            $this->dbDisconnect();
             return "insert_failed";
         }
 
@@ -127,17 +125,13 @@ class Database extends DatabaseConnect{
         // Grab the password from the user if they do, so we can compare it with the entered one. 2 birds, one large rock.
         $userInfo = $this->getUserInfo(0, "username", $username);
 
-        // If it is empty, then the user does not exist, so return that
         if(empty($userInfo)){
             return "user_not_found";
         }
 
         // If we get this far, we now have a hashed password to compare, so let's compare it
         if(password_verify($password, $userInfo[0]["password"])){
-            // Password matches, so log the user in
             $user = $this->setUser($userInfo[0]["userid"]);
-
-            // Return the user object
             return $user;
         }else{
             return "pass_wrong";
@@ -146,12 +140,10 @@ class Database extends DatabaseConnect{
 
     public function getDBCookie($token, $cookieType){
 
-        // Hashing is done in the Facade
 
         // Get the cookie type ID
         $cookieTypeID = $this->getCookieTypeID($cookieType);
 
-        // If typeID is false, no type ID is set for this cookie yet
         if(!$cookieTypeID){
             return "no_cookie_id";
         }
@@ -187,11 +179,8 @@ class Database extends DatabaseConnect{
 
     public function setDBCookie($token, $userID, $cookieType){
 
-        // Token is hashed in the Facade
-        // Get the cookie type ID
         $cookieTypeID = $this->getCookieTypeID($cookieType);
 
-        // If typeID is false, no type ID is set for this cookie yet
         if(!$cookieTypeID){
             return "no_cookie_id";
         }
@@ -213,61 +202,48 @@ class Database extends DatabaseConnect{
         // If there is an existing one, we just want to update it rather than creating a new one
         if(!empty($results)){
 
-            // Update query rather than insert
             $sql = "
                 UPDATE cookies
                 SET value=?
                 WHERE userid=? AND cookietypeid=?;
             ";
 
-            // Prepare
             $stmt = $this->con->prepare($sql);
 
-            // Bind the params
             $stmt->bindParam(1, $token);
             $stmt->bindParam(2, $userID);
             $stmt->bindParam(3, $cookieTypeID);
         }else{
 
-            // SQL query to insert the cookie info
             $sql = "
                 INSERT INTO cookies(userid, cookietypeid, value)
                 VALUES(?, ?, ?);
             ";
 
-            // Prepare the stmt
             $stmt = $this->con->prepare($sql);
 
-            // Bind the params
             $stmt->bindParam(1, $userID);
             $stmt->bindParam(2, $cookieTypeID);
             $stmt->bindParam(3, $token);
         }
 
-        // Execute the query
         return $stmt->execute();
     }
 
     private function getCookieTypeID($cookieType){
 
-        // SQL to get the cookie type ID
         $sql = "SELECT * FROM cookietypes WHERE cookietype = ?;";
 
-        // Connect to the DB
         $this->dbConnect();
 
-        // Prepare the stmt
         $stmt = $this->con->prepare($sql);
 
-        // Bind the param
         $stmt->bindParam(1, $cookieType);
 
-        // Execute & fetch
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $results = $stmt->fetchAll();
 
-        // Disconnect
         $this->dbDisconnect();
 
         // Return the ID
