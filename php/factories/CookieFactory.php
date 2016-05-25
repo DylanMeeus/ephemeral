@@ -6,6 +6,7 @@ if(!defined("SERVLET"))
 require_once "php/core/Cookie.php";
 
 class CookieFactory{
+    // TODO: remove this, cookies do not require a factory.
     public static function create(){
         return new Cookie();
     }

@@ -8,14 +8,10 @@ require_once "php/factories/DatabaseFactory.php";
 
 class Facade{
 
-    // Vars to contain the objects
     private $database;
 
-    // Constructor will use static methods to obtain objects and turn the vars above in to said objects ... man I comment too much
     public function __construct(){
-
         $this->database = DatabaseFactory::create();
-
     }
 
     public function registerAccount($username, $password, $email, $firstName, $lastName){
