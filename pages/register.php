@@ -35,7 +35,7 @@ if(isset($_SESSION["user"]))
 
         <div class="form-group">
 
-           <!-- <label for="email" class="sr-only">E-mail Address</label> -->
+            <label for="email" class="sr-only">E-mail Address</label>
             <input type="email" id="email" name="email" class="form-control" placeholder="E-mail Address" required>
 
         </div>
