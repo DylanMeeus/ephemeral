@@ -11,8 +11,7 @@ class Servlet{
 
     /**
      * @var facade
-     * - Facade, will contain Facade object
-     * - Set in constructor
+     *  The facade is our Single-Point-Of-Access to the model
      */
     private $facade;
 
@@ -23,14 +22,14 @@ class Servlet{
     private $data, $urls, $errors, $notifications = array();
 
     public function __construct(){
+        $this->setup();
+    }
 
-        // Again, no comment needed but hey, I'm giving you a comment: you smell awesome today.
+    private function setup()
+    {
         $this->facade = new Facade();
-
-        // A default timezone, for database time consistency
         date_default_timezone_set("Europe/London"); // Stick this in a config file when you figure out a name for the file :p
 
-        // Set up the urls array
         $this->urls["css"] = CSS_URL;
         $this->urls["js"] = JS_URL;
         $this->urls["fonts"] = FONTS_URL;
@@ -85,7 +84,6 @@ class Servlet{
         $footer = true;
 
         // Note - All variables above should be changed inside the case, within the switch statement, if necessary
-        // Note to Chris - Why?
         // Switch the action variable that we obtained from the POST / GET (default is set above)
         switch($action){
             case "home":
@@ -131,9 +129,6 @@ class Servlet{
         }
     }
 
-    /**
-     * Boring Page Methods
-     */
 
     private function home(){
         $loadPage = "home.php";
@@ -158,10 +153,8 @@ class Servlet{
     /**
      * Methods that actually do things
      */
-
     private function registerAccount(){
 
-        // Get stuff from the form
         $username = $_POST["username"];
         $password = $_POST["password"];
         $email = $_POST["email"];
@@ -177,7 +170,7 @@ class Servlet{
 
         $loadPage = "registeraccount.php";
         switch($account){
-            case "invalid_email": // my mail is valid yet it says it is not?
+            case "invalid_email":
                 $this->errors[] = "The e-mail address you entered is invalid.";
                 $loadPage = "register.php";
                 break;
@@ -198,7 +191,6 @@ class Servlet{
 
     private function loginAccount(){
 
-        // Get the user / pass etc.
         $username = $_POST["username"];
         $password = $_POST["password"];
         @$rememberMe = $_POST["rememberme"];
@@ -219,10 +211,8 @@ class Servlet{
         // Ensure that the user object is returned by checking that it is not null
         if($user != null) {
 
-            // Set the session userinfo
             $_SESSION["user"] = $user;
 
-            // Set a loggedin cookie if remember me was checked
             if(isset($rememberMe)){
                 $cookieName = "loggedin";
                 $cookieValue = microtime();
@@ -253,7 +243,6 @@ class Servlet{
             session_destroy();
         }
 
-        // Send the user to the homepage
         $nextPage = "home.php";
         return $nextPage;
     }
