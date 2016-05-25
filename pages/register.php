@@ -9,9 +9,17 @@ if(isset($_SESSION["user"]))
 
 ?>
 
+<!-- show some feedback from notifications / errors -->
+
+<?php
+    foreach($this->errors as $error){
+        echo "$error";
+    }
+?>
+
 <div class="container register-form">
 
-    <form action="index.php?action=registeraccount" method="post" class="form-signin">
+    <form action="index.php?action=registeraccount" method="post" class="form-signin" enctype="multipart/form-data">
 
         <h2 class="form-signin-heading">Register Here</h2>
 
@@ -27,7 +35,7 @@ if(isset($_SESSION["user"]))
 
         <div class="form-group">
 
-            <label for="email" class="sr-only">E-mail Address</label>
+           <!-- <label for="email" class="sr-only">E-mail Address</label> -->
             <input type="email" id="email" name="email" class="form-control" placeholder="E-mail Address" required>
 
         </div>

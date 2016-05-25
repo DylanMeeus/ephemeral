@@ -7,6 +7,7 @@ if(!defined("SERVLET"))
 require_once "php/data/DatabaseConnect.php";
 require_once "php/factories/UserFactory.php";
 require_once "php/factories/CookieFactory.php";
+require_once "php/helper/debughelper.php";
 
 class Database extends DatabaseConnect{
 
@@ -57,48 +58,46 @@ class Database extends DatabaseConnect{
         return($results);
     }
 
-    public function registerAccount($username, $password, $email, $firstName, $lastName){
+    public function registerAccount($username, $password, $email, $firstName, $lastName)
+    {
 
         // Ensure that the email is an actual e-mail address
-        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            DebugHelper::log("invalid email: " .$email);
             return "invalid_email";
         }
 
         // See if a user with this username already exists
         $oldUser = $this->getUserInfo("userid", "email", $email);
-        if(!empty($oldUser)){
+        if (!empty($oldUser)) {
             return "user_exists";
         }
 
-        // Set up an SQL to input the user to the DB
-        $sql = "
-            INSERT INTO users (username, password, email, firstname, lastname)
-            VALUES(?,?,?,?,?);
-        ";
+        $sql = "INSERT INTO users (username, password, email, firstname, lastname)VALUES(?,?,?,?,?);";
 
-        // Connect to the DB
-        $this->dbConnect();
+        try {
+            $this->dbConnect();
+            $stmt = $this->con->prepare($sql);
 
-        // Prepare the statement
-        $stmt = $this->con->prepare($sql);
+            $stmt->bindParam(1, $username);
+            $stmt->bindParam(2, $password);
+            $stmt->bindParam(3, $email);
+            $stmt->bindParam(4, $firstName);
+            $stmt->bindParam(5, $lastName);
 
-        // Bind the params
-        $stmt->bindParam(1, $username);
-        $stmt->bindParam(2, $password);
-        $stmt->bindParam(3, $email);
-        $stmt->bindParam(4, $firstName);
-        $stmt->bindParam(5, $lastName);
+            // Execute the query
+            if (!$stmt->execute()) {
+                $this->dbDisconnect();
+                return "insert_failed";
+            }
 
-        // Execute the query
-        if(!$stmt->execute()){
             $this->dbDisconnect();
+        }
+        catch(Exception $e){
+            DebugHelper::log($e->getMessage());
             return "insert_failed";
         }
 
-        // Disconnect from the DB
-        $this->dbDisconnect();
-
-        // Return success string
         return "user_created";
     }
 

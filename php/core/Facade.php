@@ -19,7 +19,6 @@ class Facade{
     }
 
     public function registerAccount($username, $password, $email, $firstName, $lastName){
-        // Hash the password
         $password = password_hash($password, PASSWORD_DEFAULT);
         return $this->database->registerAccount($username, $password, $email, $firstName, $lastName);
     }

@@ -25,6 +25,6 @@ foreach($this->notifications as $notification){
 
 ?>
 
-<br />
 
+<h1>Registeraccount.php</h1>
 Login <a href="index.php?action=login">here.</a>

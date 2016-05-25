@@ -29,7 +29,7 @@ class DatabaseConnect{
             $this->con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         } catch(Exception $exception){
-
+            DebugHelper::log("Exception, could not connect to the database " . $exception->getMessage());
             // Error message if the DB connection fails
             echo "Connection to the Database failed: " . $exception->getMessage();
         }
