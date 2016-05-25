@@ -19,7 +19,7 @@ if(isset($_SESSION["user"]))
 
 <div class="container register-form">
 
-    <form action="index.php?action=registeraccount" method="post" class="form-signin" enctype="multipart/form-data">
+    <form action="index.php?action=registeraccount" method="post" class="form-signin" >
 
         <h2 class="form-signin-heading">Register Here</h2>
 
