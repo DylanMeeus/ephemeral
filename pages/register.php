@@ -9,9 +9,17 @@ if(isset($_SESSION["user"]))
 
 ?>
 
+<!-- show some feedback from notifications / errors -->
+
+<?php
+    foreach($this->errors as $error){
+        echo "$error";
+    }
+?>
+
 <div class="container register-form">
 
-    <form action="index.php?action=registeraccount" method="post" class="form-signin">
+    <form action="index.php?action=registeraccount" method="post" class="form-signin" >
 
         <h2 class="form-signin-heading">Register Here</h2>
 

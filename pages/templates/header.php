@@ -1,16 +1,13 @@
 <?php
-
 if(!defined("SERVLET"))
     die("You may not view this page.");
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 
-    <link rel="stylesheet" href="<?php echo $this->urls["css"] ?>bootstrap/bootstrap.min.css">
-    <link rel="stylesheet" href="<?php echo $this->urls["css"] ?>custom.css">
+    <link rel="stylesheet" href="/ephemeral/css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="/ephemeral/css/custom.css">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 

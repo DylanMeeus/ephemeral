@@ -11,7 +11,7 @@ if(isset($_SESSION["user"]))
 
 <div class="container login-form">
 
-    <form action="index.php?action=loginaccount" method="post" class="form-signin">
+    <form action="index.php?action=loginaccount" method="post" class="form-signin" >
 
         <h2 class="form-signin-heading">Login Here</h2>
 
