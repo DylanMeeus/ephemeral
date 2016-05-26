@@ -2,6 +2,8 @@
 
 // ORM class for roles
 
+if(!defined("SERVLET"))
+    die("You may not view this page");
 
 class Role
 {

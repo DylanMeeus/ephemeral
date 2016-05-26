@@ -5,13 +5,13 @@ if(!defined("SERVLET"))
 
 require_once "php/core/Facade.php";
 require_once "php/config/path.php";
+require_once "php/helper/debughelper.php";
 
 class Servlet{
 
     /**
      * @var facade
-     * - Facade, will contain Facade object
-     * - Set in constructor
+     *  The facade is our Single-Point-Of-Access to the model
      */
     private $facade;
 
@@ -22,46 +22,39 @@ class Servlet{
     private $data, $urls, $errors, $notifications = array();
 
     public function __construct(){
+        $this->setup();
+    }
 
-        // Again, no comment needed but hey, I'm giving you a comment: you smell awesome today.
+    private function setup()
+    {
         $this->facade = new Facade();
-
-        // A default timezone, for database time consistency
         date_default_timezone_set("Europe/London"); // Stick this in a config file when you figure out a name for the file :p
 
-        // Set up the urls array
         $this->urls["css"] = CSS_URL;
         $this->urls["js"] = JS_URL;
         $this->urls["fonts"] = FONTS_URL;
     }
 
-    public function processRequest(){
+    public function processRequest()
+    {
 
-        // Fire up a session right away
         session_start();
-
-        // If there is no user session
-        if(!isset($_SESSION["user"])){
+        if (!isset($_SESSION["user"])) {
 
             $cookieName = "loggedin";
 
-            // See if there is a cookie
-            if(isset($_COOKIE[$cookieName])){
+            if (isset($_COOKIE[$cookieName])) {
 
                 // Check that the cookie matches in the Database
                 $dbCookie = $this->facade->getDBCookie($_COOKIE[$cookieName], $cookieName);
+                if (sha1($_COOKIE[$cookieName]) === $dbCookie->getValue()) {
 
-                // Compare the 2 and set a session if it is approved
-                if(sha1($_COOKIE[$cookieName]) === $dbCookie->getValue()){
-
-                    // Set the session
                     $_SESSION["user"] = $this->facade->setUser($dbCookie->getUserID());
 
-                    // Set a new cookie
+                    // Set a new cookie & store it in the database
                     $cookieValue = microtime();
                     setcookie($cookieName, $cookieValue, time() + 60 * 60 * 24 * 30);
 
-                    // Set it in the database too
                     $this->facade->setDBCookie($cookieValue, $_SESSION["user"]->getUserID(), $cookieName);
                 }
             }
@@ -74,30 +67,23 @@ class Servlet{
         $action = "home";
 
         // Set up an action from post/get
-        if(isset($_POST["action"]))
+        if (isset($_POST["action"]))
+        {
             $action = $_POST["action"];
-        elseif(isset($_GET["action"]))
+        }
+        elseif (isset($_GET["action"]))
+        {
             $action = $_GET["action"];
+        }
 
-        /**
-         * @var redirect
-         * - Redirection variable
-         * - Will define whether or not the action's eventual method will just execute or reload the page as well
-         * - example: if true, the method will be "require_once"d so the method will need to return a page to load
-         * - example: if false, the method will just execute, and run the method without requiring it, useful for xml/json outputs etc.
-         */
+        // stay on same page (and push data), or redirect
         $redirect = true;
 
-        /**
-         * @var header
-         * @var footer
-         * - These ones define whether or not we will include a header file and/or a footer file around the method
-         */
+        // define if we need headers/footers
         $header = true;
         $footer = true;
 
         // Note - All variables above should be changed inside the case, within the switch statement, if necessary
-
         // Switch the action variable that we obtained from the POST / GET (default is set above)
         switch($action){
             case "home":
@@ -132,19 +118,17 @@ class Servlet{
          * Preceeding the require like with @ just in-case a mistake is made somewhere at any time - this way loading nothing will just happen without errors
          */
 
-        if($header)
+        if($header){
             require_once("pages/templates/header.php");
-
-        if($redirect)
+        }
+        if($redirect){
             @require_once("pages/$loadPage");
-
-        if($footer)
+        }
+        if($footer){
             require_once("pages/templates/footer.php");
+        }
     }
 
-    /**
-     * Boring Page Methods
-     */
 
     private function home(){
         $loadPage = "home.php";
@@ -169,10 +153,8 @@ class Servlet{
     /**
      * Methods that actually do things
      */
-
     private function registerAccount(){
 
-        // Get stuff from the form
         $username = $_POST["username"];
         $password = $_POST["password"];
         $email = $_POST["email"];
@@ -180,14 +162,21 @@ class Servlet{
         $lastName = $_POST["lastname"];
 
         // Insert the user's account
+        DebugHelper::log("servlet: " . $email . "first: " . $firstName . "last: " . $lastName . "user: " .$username);
+
         $account = $this->facade->registerAccount($username, $password, $email, $firstName, $lastName);
 
+        // if something went wrong, we want to redirect the user to the registration page. This way, they can just try again
+
+        $loadPage = "registeraccount.php";
         switch($account){
             case "invalid_email":
                 $this->errors[] = "The e-mail address you entered is invalid.";
+                $loadPage = "register.php";
                 break;
             case "user_exists":
                 $this->errors[] = "A user with this username already exists.";
+                $loadPage = "register.php"; // TODO: push the data back to the form to auto-populate that which was not wrong
                 break;
             case "insert_failed":
                 $this->errors[] = "The insertion failed - See pseud.";
@@ -197,13 +186,11 @@ class Servlet{
                 break;
         }
 
-        $loadPage = "registeraccount.php";
         return $loadPage;
     }
 
     private function loginAccount(){
 
-        // Get the user / pass etc.
         $username = $_POST["username"];
         $password = $_POST["password"];
         @$rememberMe = $_POST["rememberme"];
@@ -224,10 +211,8 @@ class Servlet{
         // Ensure that the user object is returned by checking that it is not null
         if($user != null) {
 
-            // Set the session userinfo
             $_SESSION["user"] = $user;
 
-            // Set a loggedin cookie if remember me was checked
             if(isset($rememberMe)){
                 $cookieName = "loggedin";
                 $cookieValue = microtime();
@@ -258,7 +243,6 @@ class Servlet{
             session_destroy();
         }
 
-        // Send the user to the homepage
         $nextPage = "home.php";
         return $nextPage;
     }
