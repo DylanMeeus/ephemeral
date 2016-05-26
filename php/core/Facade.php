@@ -74,4 +74,8 @@ class Facade{
             )
         );
     }
+
+    public function updateUser($userID){
+        return $this->database->updateUser($userID);
+    }
 }

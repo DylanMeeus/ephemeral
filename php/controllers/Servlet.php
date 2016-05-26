@@ -141,6 +141,10 @@ class Servlet{
                 $redirect = $header = $footer = false;
                 $this->setPersonalMessage();
                 break;
+            case "updateuser":
+                $redirect = $header = $footer = false;
+                $this->updateUser();
+                break;
             default:
                 $loadPage = $this->home();
         }
@@ -389,5 +393,20 @@ class Servlet{
 
         // Update the current session with the new data
         $_SESSION["user"] = $userID;
+    }
+
+    // This method updates the database with the session info
+    private function updateUser(){
+
+        if(isset($_SESSION["user"])){
+
+            // User ID from the SESSION
+            $userID = $_SESSION["user"]->getUserID();
+
+            // Set all of the database info to the info from the session
+            echo $this->facade->updateUser($userID);
+        }else{
+            return false;
+        }
     }
 }

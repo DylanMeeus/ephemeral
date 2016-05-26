@@ -123,6 +123,71 @@ class Database extends DatabaseConnect{
         return $user;
     }
 
+    public function updateUser($userID){
+
+        /**
+         * This user will be updated from the session and then inserted in to the Database
+         * Make sure you update the session before using this method
+         */
+        if(isset($_SESSION["user"])){
+            $user = $_SESSION["user"];
+        }else{
+            return false;
+        }
+
+        /**
+         * Now we update every column in the users table
+         * Simply add a column name to the array in order to add a new column - no need to change anything else
+         * Also add the ORM method to pull it from the $user object too, of course :)
+         * *NOTE* PASSWORD IS ABSENT FROM THIS - ONLY CHANGE / GET PASSWORD WITH THE PASSWORD METHODS
+         * *NOTE* all entries are lowercase, as the database ones are
+         */
+        $columns = array(
+            "userid" => $user->getUserID(),
+            "email" => $user->getEmail(),
+            "firstname" => $user->getFirstName(),
+            "lastname" => $user->getLastName(),
+            "signature" => $user->getSignature(),
+            "personalmessage" => $user->getPersonalMessage(),
+            "avatar" => $user->getAvatar(),
+            "roleid" => $user->getRoleID(),
+            "username" => $user->getUsername(),
+            "fullavatar" => $user->getFullAvatar()
+        );
+
+        // Get the last key of the array so we can make sure there is no comma after the last one in the query
+        end($columns);
+        $last = key($columns);
+        reset($columns);
+
+        // Start the query, leaving space for the fillers
+        $sql = "UPDATE users SET ";
+
+        foreach($columns as $column => $value){
+
+            // Add each column name to the SQL query (End it if we are on the last key)
+            $sql .= ($column === $last) ? "$column = :$column WHERE userid = :useridsecond" : "$column = :$column , ";
+        }
+
+        $this->dbConnect();
+        $stmt = $this->con->prepare($sql);
+
+        // Now bind all of the values within a loop - same order so will always work
+        foreach($columns as $column => $value){
+            $stmt->bindValue(":$column", $value);
+        }
+
+        // Finally, bind the user ID
+        $stmt->bindParam(":useridsecond", $userID);
+
+        // Execute the query
+        $result = $stmt->execute();
+
+        $this->dbDisconnect();
+
+        return $result;
+    }
+
     public function loginAccount($username, $password){
 
         // First off, see if a user with this username exists
