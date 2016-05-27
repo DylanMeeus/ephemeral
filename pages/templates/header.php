@@ -27,7 +27,7 @@ if(!defined("SERVLET"))
       <ul class="nav navbar-nav">
 	<li><a href="#">Home</a></li>
 	<li><a href="#">Forum</a></li>
-	<li><a href="#">Shoutbox</a></li> <!-- seperate shoutbox window, easier for phones -->
+	<li><a href="index.php?action=gotoshoutbox">Shoutbox</a></li> <!-- seperate shoutbox window, easier for phones -->
 	<li><a href="#">Members</a></li> <!-- list all members -->
       </ul>
     </div>

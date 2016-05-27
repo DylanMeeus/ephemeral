@@ -107,6 +107,11 @@ class Servlet{
             case "logout":
                 $loadPage = $this->logout();
                 break;
+            case "gotoshoutbox": // just loads the page, does not push any data to it.
+            {
+                $loadPage = "shoutbox.php";
+                break;
+            }
             // Another default, just for consistency and avoiding any potential errors ( I don't know how they'd happen but ... this is coding! )
             default:
                 $loadPage = $this->home();

@@ -14,4 +14,6 @@ if(!defined("SERVLET"))
     <script src="/ephemeral/js/jquery.min.js"></script>
     <script src="/ephemeral/js/bootstrap/bootstrap.min.js"></script>
 
+    <!-- ask chris if I should make this context aware? -->
+    <script src="/ephemeral/js/shoutbox.js"></script>
 </footer>
