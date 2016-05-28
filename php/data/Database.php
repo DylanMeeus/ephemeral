@@ -33,10 +33,8 @@ class Database extends DatabaseConnect{
             }
         }
 
-        // Set up the sql query
         $sql = "SELECT $select FROM users WHERE $column = ?;";
 
-        // Connect to the database
         $this->dbConnect();
 
         // Prepare, bind and execute the query
@@ -45,13 +43,10 @@ class Database extends DatabaseConnect{
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
-        // Collect the results
         $results = $stmt->fetchAll();
 
-        // Disconnect from the DB
         $this->dbDisconnect();
 
-        // Return the results
         return($results);
     }
 
@@ -259,7 +254,7 @@ class Database extends DatabaseConnect{
         try
         {
             $this->dbConnect();
-            $sql = "insert into shoutbox(userid, message) values (?,?)";
+            $sql = "insert into shoutbox(userid, message) values (?,?);";
             $statement = $this->con->prepare($sql);
 
             $statement->bindParam(1,$userID);
@@ -275,6 +270,67 @@ class Database extends DatabaseConnect{
         finally
         {
             $this->dbDisconnect();
+        }
+    }
+
+    /**
+     * Start with a basic method to load the shoutbox. We don't need *that* much functionality to start with.
+     */
+    public function loadShoutbox()
+    {
+        try
+        {
+
+            $this->dbConnect();
+
+
+            $sql = "SELECT * FROM shoutbox";
+            $sqlCount = "select count(messages) from shoutbox;";
+
+            $statement = $this->con->prepare($sql);
+
+            $statement->setFetchMode(PDO::FETCH_ASSOC);
+            $statement->execute();
+            $results = $statement->fetchAll();
+
+            foreach($results as $res)
+            {
+                $userID = $res['userid'];
+                $message = $res['message'];
+            }
+        }
+        catch(PDOException $pdoEx)
+        {
+            DebugHelper::log("pdo exception: " . $pdoEx->getMessage());
+            echo $pdoEx->getMessage();
+        }
+        catch(Exception $ex)
+        {
+            DebugHelper::log("in catch: " . $ex->getMessage());
+            echo $ex->getMessage();
+        }
+        finally
+        {
+            $this->dbDisconnect();
+        }
+    }
+
+
+    /**
+     * Considering we work with Ids, it makes sense to have a private method
+     * that fetches the user information by ID.
+     */
+    private function getUserById() // returns a 'User' object.
+    {
+
+        try
+        {
+
+        }
+        catch(Exception $ex)
+        {
+            DebugHelper::log($ex->getMessage());
+
         }
     }
 }

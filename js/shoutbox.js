@@ -3,7 +3,19 @@
  */
 function populateShoutbox()
 {
-    console.log("alive!");
+    // check if the shoutbox exists (shoutbox is on the page)
+    if($("#shoutbox").length)
+    {
+
+        $.ajax({
+            type: "GET",
+            url: "index.php?action=loadshouts",
+            success : function (res){
+                console.log("result: " + res);
+            }
+        })
+
+    }
 }
 
 $("#shoutboxinput").keypress(function(key)
@@ -29,3 +41,7 @@ function postMessage(messageBody)
         });
     console.log("message posted!");
 }
+
+
+// function to run after our div became visible.
+$("#shoutbox").load(populateShoutbox());

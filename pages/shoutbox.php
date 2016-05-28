@@ -5,7 +5,7 @@
     <!-- table with posted messages -->
     <!-- input field at the bottom -->
 
-    <table class="table table-responsive">
+    <table class="table table-responsive" onload="populateShoutbox();">
         <tbody>
             <tr>
                 <td>Insanity</td>

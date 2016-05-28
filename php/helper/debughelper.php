@@ -3,10 +3,15 @@
 
 class DebugHelper{
 
-    // could make this a bit more flexible, so it can print more than just strings?
+    // set to false to disable debugging.
+    public static $development = true;
+
     public static function log($content)
     {
-        echo '<script>console.log("'.$content.'");</script>';
+        if(DebugHelper::$development)
+        {
+            echo '<script>console.log("'.$content.'");</script>';
+        }
     }
 }
 

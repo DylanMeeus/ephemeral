@@ -51,4 +51,18 @@ class Facade{
         }
     }
 
+    public function loadShoutbox()
+    {
+        try
+        {
+            DebugHelper::log("here!");
+            return $this->database->loadShoutbox(); // TODO: choose a better name for 'loadShoutbox', surround with try-catch
+        }
+        catch(Exception $ex)
+        {
+            DebugHelper::log("exception: " . $ex->getMessage());
+            echo $ex->getMessage();
+        }
+    }
+
 }

@@ -116,9 +116,14 @@ class Servlet{
             }
             case "postshout" : // adds to database
             {
-                $loadPage="home.php";
                 $redirect = false;
                 $this->postShout();
+                break;
+            }
+            case "loadshouts":
+            {
+                $redirect = false;
+                $this->loadShouts();
                 break;
             }
             default:
@@ -168,6 +173,11 @@ class Servlet{
     private function profile(){
         $loadPage = "profile.php";
         return $loadPage;
+    }
+
+    private function loadShouts()
+    {
+        $this->facade->loadShoutbox();
     }
 
 
