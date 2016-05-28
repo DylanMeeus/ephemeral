@@ -60,6 +60,7 @@ class Servlet{
             }
         }
 
+
         // Page to load, set as nothing to begin with
         $loadPage = "";
 
@@ -82,6 +83,7 @@ class Servlet{
         // define if we need headers/footers
         $header = true;
         $footer = true;
+
 
         // Note - All variables above should be changed inside the case, within the switch statement, if necessary
         // Switch the action variable that we obtained from the POST / GET (default is set above)
@@ -112,7 +114,13 @@ class Servlet{
                 $loadPage = "shoutbox.php";
                 break;
             }
-            // Another default, just for consistency and avoiding any potential errors ( I don't know how they'd happen but ... this is coding! )
+            case "postshout" : // adds to database
+            {
+                $loadPage="home.php";
+                $redirect = false;
+                $this->postShout();
+                break;
+            }
             default:
                 $loadPage = $this->home();
         }
@@ -123,15 +131,22 @@ class Servlet{
          * Preceeding the require like with @ just in-case a mistake is made somewhere at any time - this way loading nothing will just happen without errors
          */
 
-        if($header){
-            require_once("pages/templates/header.php");
-        }
         if($redirect){
+
+            // the order in which these get called is important.
+            if($header){
+                require_once("pages/templates/header.php");
+            }
+
+
             @require_once("pages/$loadPage");
+
+
+            if($footer){
+                require_once("pages/templates/footer.php");
+            }
         }
-        if($footer){
-            require_once("pages/templates/footer.php");
-        }
+
     }
 
 
@@ -155,9 +170,22 @@ class Servlet{
         return $loadPage;
     }
 
-    /**
-     * Methods that actually do things
-     */
+
+    private function postShout()
+    {
+        $shoutMessage = $_POST['shout'];
+        DebugHelper::log("shoutmessage " . $shoutMessage);
+        try
+        {
+            $this->facade->postShoutboxMessage(2, $shoutMessage);
+            echo "done";
+        }
+        catch(Exception $ex)
+        {
+            echo "exception";
+        }
+    }
+
     private function registerAccount(){
 
         $username = $_POST["username"];

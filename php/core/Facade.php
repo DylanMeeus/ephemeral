@@ -38,4 +38,17 @@ class Facade{
         return $this->database->setUser($userID);
     }
 
+    // throws exception on error on insert
+    public function postShoutboxMessage($userID, $message)
+    {
+        try
+        {
+            $this->database->postShoutboxMessage($userID,$message);
+        }
+        catch(Exception $ex)
+        {
+            throw new Exception("something went wrong: " . $ex->getMessage());
+        }
+    }
+
 }

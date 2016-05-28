@@ -9,7 +9,23 @@ function populateShoutbox()
 $("#shoutboxinput").keypress(function(key)
 {
     // 13 == Enter
-    if(key.which == 13){
-        console.log("User pressed enter!");
+    console.log("pressed the shoutbox!");
+    var shoutboxInput = $("#shoutboxinput").val();
+    if(key.which == 13 && shoutboxInput){
+        postMessage(shoutboxInput);
     }
 });
+
+function postMessage(messageBody)
+{
+    console.log("posting message: " + messageBody);
+    $.ajax({
+        type: "POST",
+        url: "index.php?action=postshout",
+        data: { "shout" : messageBody }, // notice I only need to pass the message body, the user we can fetch from the servlet.
+        success: function (res) {
+                console.log(res);
+            }
+        });
+    console.log("message posted!");
+}

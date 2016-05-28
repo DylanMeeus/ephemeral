@@ -249,6 +249,34 @@ class Database extends DatabaseConnect{
         // Return the ID
         return !empty($results) ? $results[0]["cookietypeid"] : false;
     }
+
+
+    public function postShoutboxMessage($userID, $message)
+    {
+        /*  Possibly filter for "message length"
+            Might make a "restrictions / validations class for this
+        */
+        try
+        {
+            $this->dbConnect();
+            $sql = "insert into shoutbox(userid, message) values (?,?)";
+            $statement = $this->con->prepare($sql);
+
+            $statement->bindParam(1,$userID);
+            $statement->bindParam(2,$message);
+
+            $statement->execute();
+        }
+        catch(Exception $ex)
+        {
+            DebugHelper::log($ex->getMessage());
+            throw new Exception("Posting to the shoutbox went wrong: " . $ex->getMessage());
+        }
+        finally
+        {
+            $this->dbDisconnect();
+        }
+    }
 }
 
 
