@@ -307,7 +307,7 @@ class Database extends DatabaseConnect{
         catch(Exception $ex)
         {
             DebugHelper::log("in catch: " . $ex->getMessage());
-            echo $ex->getMessage();
+            echo $ex->getMessage(); // also echo it, in case we are not in production. But this is a doubtful practise.
         }
         finally
         {
@@ -320,17 +320,55 @@ class Database extends DatabaseConnect{
      * Considering we work with Ids, it makes sense to have a private method
      * that fetches the user information by ID.
      */
-    private function getUserById() // returns a 'User' object.
+    private function getUserById($id) // returns a 'User' object.
     {
 
         try
         {
+            $this->dbConnect();
+            $sql = "select * from users where userid = ?";
+            $statement = $this->con->prepare($sql);
 
+
+            $statement->setFetchMode(PDO::FETCH_ASSOC);
+            $statement->execute();
+            $results = $statement->fetchAll();
+
+            // this will only return 1 result, userIDs are unique. Enforcement by the database. (or no result)
+
+            if(!empty($results)) {
+                // fill the user with this information
+                $result = $results[0];
+                $user = new User();
+                //TODO: we need a method for this, as we use it more often.
+                // TODO: Create a builder as well?
+                $user->setUserID($id);
+                $user->setFirstName($result['firstname']);
+                $user->setLastName($result['lastname']);
+                $user->setUsername($result['username']);
+                $user->setEmail($result['email']);
+                $user->setAvatar($result['email']);
+                $user->setRoleID($result['roleid']); // this needs to be replaced with an actual role.
+                $user->setSignature($result['signature']);
+                // we have set the user.
+                return $user;
+            }
+            throw new Exception("user not found");
+
+        }
+        catch(PDOException $ex)
+        {
+            DebugHelper::log($ex->getMessage());
+            echo $ex->getMessage();
         }
         catch(Exception $ex)
         {
             DebugHelper::log($ex->getMessage());
-
+            echo $ex->getMessage();
+        }
+        finally
+        {
+            $this->dbDisconnect();
         }
     }
 }
