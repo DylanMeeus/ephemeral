@@ -1,7 +1,7 @@
 <?php
 
 
-class ShoutboxMessage
+class ShoutboxMessage implements  JsonSerializable
 {
 
     private $user;
@@ -17,6 +17,14 @@ class ShoutboxMessage
 
     public function setUser($user){$this->user=$user;}
     public function setMessage($message){$this->message = $message;}
+
+    public function jsonSerialize()
+    {
+        return [
+          "username" => $this->user->getUsername(),
+            "message" => $this->message
+        ];
+    }
 
 }
 

@@ -29,6 +29,17 @@ class Shoutbox
         return $this->messages;
     }
 
+
+
+
+    public function toJsonString()
+    {
+        // returns the json string
+        return (json_encode($this->messages));
+
+
+    }
+
 }
 
 

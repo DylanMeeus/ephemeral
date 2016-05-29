@@ -299,7 +299,6 @@ class Database extends DatabaseConnect{
 
             foreach($results as $res)
             {
-                DebugHelper::log("found result");
                 $userID = $res['userid'];
                 $user = $this->getUserById($userID); // if the method didn't find a user, it will throw an error
                 $message = $res['message'];         // We do not need to check if "user" is null, the error will stop execution.
@@ -323,7 +322,6 @@ class Database extends DatabaseConnect{
         {
             $this->dbDisconnect();
         }
-        DebugHelper::log("returning shoutbox with: " . count($shoutBox->getMessages()));
         return $shoutBox;
     }
 
@@ -365,7 +363,6 @@ class Database extends DatabaseConnect{
                 // we have set the user.
                 $this->dbDisconnect();
                 return $user;
-                DebugHelper::log($user);
             }
             throw new Exception("user not found");
 

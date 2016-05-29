@@ -6,6 +6,8 @@ if(!defined("SERVLET"))
 require_once "php/core/Facade.php";
 require_once "php/config/path.php";
 require_once "php/helper/debughelper.php";
+require_once "php/core/model/Shoutbox.php";
+require_once "php/core/model/Shoutboxmessage.php";
 
 class Servlet{
 
@@ -178,7 +180,9 @@ class Servlet{
     private function loadShouts()
     {
         $shoutbox = $this->facade->loadShoutbox();
-        DebugHelper::log(count($shoutbox->getMessages()));
+
+        echo $shoutbox->toJsonString();
+
     }
 
 
