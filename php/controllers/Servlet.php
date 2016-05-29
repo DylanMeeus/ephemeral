@@ -180,7 +180,6 @@ class Servlet{
     private function loadShouts()
     {
         $shoutbox = $this->facade->loadShoutbox();
-
         echo $shoutbox->toJsonString();
 
     }

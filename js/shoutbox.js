@@ -6,15 +6,41 @@ function populateShoutbox()
     // check if the shoutbox exists (shoutbox is on the page)
     if($("#shoutbox").length)
     {
+        // get the table div
+
+        let tableBody = $("#shoutboxtablebody");
 
         $.ajax({
             type: "GET",
             url: "index.php?action=loadshouts",
             success : function (res){
                 console.log("result: " + res);
-            }
-        })
 
+                let shouts = JSON.parse(res);
+                console.log(shouts);
+
+                shouts.forEach(shout =>
+                {
+                    let tablerow = document.createElement("tr");
+                    let userColumn = document.createElement("td");
+                    userColumn.className += "col-xs-4 col-md-2";
+                    let userDiv = document.createElement("div");
+                    userDiv.className = "pull-right";
+                    let messageColumn = document.createElement("td");
+                    messageColumn.className += "col-xs-14 col-md-10";
+                    let messageDiv = document.createElement("div");
+                    userDiv.innerHTML = shout['username'];
+                    messageDiv.innerHTML = shout['message'];
+
+                    userColumn.appendChild(userDiv);
+                    messageColumn.appendChild(messageDiv);
+
+                    tablerow.appendChild(userColumn);
+                    tablerow.appendChild(messageColumn);
+                    tableBody.append(tablerow);
+                });
+            }
+        });
     }
 }
 
