@@ -5,6 +5,8 @@ if(!defined("SERVLET"))
 
 class User{
 
+    // TODO: implement a "toString" interface, to print it as json / xml?
+
     private
         $userID,
         $email,

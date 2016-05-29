@@ -177,7 +177,8 @@ class Servlet{
 
     private function loadShouts()
     {
-        $this->facade->loadShoutbox();
+        $shoutbox = $this->facade->loadShoutbox();
+        DebugHelper::log(count($shoutbox->getMessages()));
     }
 
 

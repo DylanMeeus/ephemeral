@@ -8,6 +8,9 @@ require_once "php/factories/UserFactory.php";
 require_once "php/factories/CookieFactory.php";
 require_once "php/helper/debughelper.php";
 
+require_once "php/core/model/Shoutboxmessage.php";
+require_once "php/core/model/Shoutbox.php";
+
 class Database extends DatabaseConnect{
 
     public function __construct(){
@@ -278,6 +281,7 @@ class Database extends DatabaseConnect{
      */
     public function loadShoutbox()
     {
+        $shoutBox = new Shoutbox();
         try
         {
 
@@ -295,8 +299,14 @@ class Database extends DatabaseConnect{
 
             foreach($results as $res)
             {
+                DebugHelper::log("found result");
                 $userID = $res['userid'];
-                $message = $res['message'];
+                $user = $this->getUserById($userID); // if the method didn't find a user, it will throw an error
+                $message = $res['message'];         // We do not need to check if "user" is null, the error will stop execution.
+                $shoutMessage = new ShoutboxMessage();
+                $shoutMessage->setUser($user);
+                $shoutMessage->setMessage($message);
+                $shoutBox->addMessage($shoutMessage);
             }
         }
         catch(PDOException $pdoEx)
@@ -313,6 +323,8 @@ class Database extends DatabaseConnect{
         {
             $this->dbDisconnect();
         }
+        DebugHelper::log("returning shoutbox with: " . count($shoutBox->getMessages()));
+        return $shoutBox;
     }
 
 
@@ -329,7 +341,7 @@ class Database extends DatabaseConnect{
             $sql = "select * from users where userid = ?";
             $statement = $this->con->prepare($sql);
 
-
+            $statement->bindParam(1,$id);
             $statement->setFetchMode(PDO::FETCH_ASSOC);
             $statement->execute();
             $results = $statement->fetchAll();
@@ -351,7 +363,9 @@ class Database extends DatabaseConnect{
                 $user->setRoleID($result['roleid']); // this needs to be replaced with an actual role.
                 $user->setSignature($result['signature']);
                 // we have set the user.
+                $this->dbDisconnect();
                 return $user;
+                DebugHelper::log($user);
             }
             throw new Exception("user not found");
 

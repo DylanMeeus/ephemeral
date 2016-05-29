@@ -1,6 +1,6 @@
 <?php
 
-require_once "./Shoutboxmessage.php";
+require_once "Shoutboxmessage.php";
 
 if(!defined("SERVLET"))
     die("You may not view this page.");
@@ -21,7 +21,12 @@ class Shoutbox
 
     public function addMessage(ShoutboxMessage $shoutBoxMessage)
     {
-        array_push($messages,$shoutBoxMessage);
+        array_push($this->messages,$shoutBoxMessage);
+    }
+
+    public function getMessages()
+    {
+        return $this->messages;
     }
 
 }
