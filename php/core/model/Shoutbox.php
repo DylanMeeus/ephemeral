@@ -16,7 +16,6 @@ class Shoutbox
     // A message contains a user, and content
 
 
-    private $count; // current count of the shoutbox.
     private $messages = array();
 
     public function addMessage(ShoutboxMessage $shoutBoxMessage)
@@ -30,14 +29,15 @@ class Shoutbox
     }
 
 
-
+    public function getCount()
+    {
+        return count($this->messages);
+    }
 
     public function toJsonString()
     {
         // returns the json string
         return (json_encode($this->messages));
-
-
     }
 
 }
