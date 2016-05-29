@@ -5,6 +5,7 @@ if(!defined("SERVLET"))
 
 require_once "php/data/Database.php";
 require_once "php/factories/DatabaseFactory.php";
+require_once "php/data/Slackdata.php";
 
 class Facade{
 
@@ -44,6 +45,10 @@ class Facade{
         try
         {
             $this->database->postShoutboxMessage($userID,$message);
+            // post to slack
+            DebugHelper::log("testing slackdata");
+            $slackData = new SlackData();
+            $slackData->postToSlack();
         }
         catch(Exception $ex)
         {

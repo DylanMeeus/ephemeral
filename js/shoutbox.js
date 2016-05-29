@@ -88,10 +88,13 @@ function postMessage(messageBody)
         url: "index.php?action=postshout",
         data: { "shout" : messageBody }, // notice I only need to pass the message body, the user we can fetch from the servlet.
         success: function (res) {
-
+            //    postToSlack();
             }
         });
+
+    // also post it to slack
 }
+
 
 
 // function to run after our div became visible.
