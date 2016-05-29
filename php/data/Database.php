@@ -290,7 +290,7 @@ class Database extends DatabaseConnect{
             $this->dbConnect();
 
 
-            $sql = "SELECT * FROM shoutbox order by shoutid";
+            $sql = "SELECT * FROM shoutbox order by shoutid asc limit 10";
             $sqlCount = "select count(messages) from shoutbox;";
 
             $statement = $this->con->prepare($sql);

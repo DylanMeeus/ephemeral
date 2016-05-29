@@ -48,7 +48,7 @@ class Facade{
             // post to slack
             DebugHelper::log("testing slackdata");
             $slackData = new SlackData();
-            $slackData->postToSlack();
+            $slackData->postToSlack($message);
         }
         catch(Exception $ex)
         {
