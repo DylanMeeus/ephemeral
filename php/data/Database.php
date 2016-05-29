@@ -123,6 +123,8 @@ class Database extends DatabaseConnect{
         // Grab the password from the user if they do, so we can compare it with the entered one. 2 birds, one large rock.
         $userInfo = $this->getUserInfo(0, "username", $username);
 
+        DebugHelper::log($username);
+
         if(empty($userInfo)){
             return "user_not_found";
         }

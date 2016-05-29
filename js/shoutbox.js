@@ -9,6 +9,7 @@ function populateShoutbox()
     // check if the shoutbox exists (shoutbox is on the page)
     if($("#shoutbox").length)
     {
+        ajaxShouts(); // ensure quicker loading at the start.
         // don't update when there are no new shouts!
         setInterval( () => {
             ajaxShouts();

@@ -39,7 +39,6 @@ class Servlet{
 
     public function processRequest()
     {
-
         session_start();
         if (!isset($_SESSION["user"])) {
 
@@ -85,7 +84,6 @@ class Servlet{
         // define if we need headers/footers
         $header = true;
         $footer = true;
-
 
         // Note - All variables above should be changed inside the case, within the switch statement, if necessary
         // Switch the action variable that we obtained from the POST / GET (default is set above)
@@ -188,10 +186,10 @@ class Servlet{
     private function postShout()
     {
         $shoutMessage = $_POST['shout'];
-        DebugHelper::log("shoutmessage " . $shoutMessage);
+        $userId = $_SESSION["user"]->getUserID();
         try
         {
-            $this->facade->postShoutboxMessage(2, $shoutMessage);
+            $this->facade->postShoutboxMessage($userId, $shoutMessage);
             echo "done";
         }
         catch(Exception $ex)
@@ -208,8 +206,6 @@ class Servlet{
         $firstName = $_POST["firstname"];
         $lastName = $_POST["lastname"];
 
-        // Insert the user's account
-        DebugHelper::log("servlet: " . $email . "first: " . $firstName . "last: " . $lastName . "user: " .$username);
 
         $account = $this->facade->registerAccount($username, $password, $email, $firstName, $lastName);
 
