@@ -343,8 +343,11 @@ class Servlet{
         if(isset($_POST)){
             $personalMessage = $_POST["pm"];
 
-            // Send it to the database!
-            $result = $this->facade->updatePersonalMessage($_SESSION["user"]->getUsername(), $personalMessage);
+            // A new user which we will push to the database
+            $updatedUser = $this->facade->setUser($_SESSION["user"]->getUserID());
+            $updatedUser->setPersonalMessage($personalMessage);
+
+            $result = $this->facade->updateUser($updatedUser);
 
             // If it worked
             if($result){

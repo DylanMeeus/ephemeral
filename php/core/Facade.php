@@ -52,7 +52,8 @@ class Facade{
     }
 
     public function updatePersonalMessage($username, $personalMessage){
-        return $this->database->updatePersonalMessage($username, $personalMessage);
+        //return $this->database->updatePersonalMessage($username, $personalMessage);
+
     }
 
     public function updateFullAvatar($files){
@@ -71,7 +72,7 @@ class Facade{
         );
     }
 
-    public function updateUser($userID){
-        return $this->database->updateUser($userID);
+    public function updateUser($user){
+        return $this->database->updateUser($user);
     }
 }
