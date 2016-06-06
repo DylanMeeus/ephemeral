@@ -66,7 +66,7 @@ if(!defined("SERVLET"))
                         <div class="form-group">
                             <li class="text-white">Welcome, <?php echo "$firstName $lastName." ?>&nbsp;</li>
                         </div>
-                        <button type="submit" class="btn btn-success">Log out</button>
+                        <input type="submit" class="btn btn-success" value="Log out">
                     </form>
                 <?php
                     }else{
@@ -79,7 +79,7 @@ if(!defined("SERVLET"))
                         <div class="form-group">
                             <input type="password" placeholder="Password" class="form-control" name="password" required>
                         </div>
-                        <button type="submit" class="btn btn-success">Sign in</button>
+                        <input type="submit" class="btn btn-success" value="Sign in">
                     </form>
 
                     <?php

@@ -118,17 +118,7 @@ class Database extends DatabaseConnect{
         return $user;
     }
 
-    public function updateUser($userID){
-
-        /**
-         * This user will be updated from the session and then inserted in to the Database
-         * Make sure you update the session before using this method
-         */
-        if(isset($_SESSION["user"])){
-            $user = $_SESSION["user"];
-        }else{
-            return false;
-        }
+    public function updateUser($user){
 
         /**
          * Now we update every column in the users table
@@ -149,6 +139,8 @@ class Database extends DatabaseConnect{
             "username" => $user->getUsername(),
             "fullavatar" => $user->getFullAvatar()
         );
+
+        $userID = $user->getUserID();
 
         // Get the last key of the array so we can make sure there is no comma after the last one in the query
         end($columns);

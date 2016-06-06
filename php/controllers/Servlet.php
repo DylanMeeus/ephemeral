@@ -182,7 +182,7 @@ class Servlet{
 
             if($newPassword != $repeatNewPassword){
                 echo "no_password_match";
-                return true;
+                return false;
             }
 
             $result = $this->facade->changePassword($_SESSION["user"]->getUsername(), $oldPassword, $newPassword);
@@ -378,11 +378,8 @@ class Servlet{
 
         if(isset($_SESSION["user"])){
 
-            // User ID from the SESSION
-            $userID = $_SESSION["user"]->getUserID();
-
             // Set all of the database info to the info from the session
-            echo $this->facade->updateUser($userID);
+            echo $this->facade->updateUser($_SESSION["user"]);
         }else{
             return false;
         }

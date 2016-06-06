@@ -5,8 +5,8 @@ if(!defined("SERVLET"))
 
 require_once "php/data/Database.php";
 require_once "php/factories/DatabaseFactory.php";
-require_once "php/data/File.php";
-require_once "php/factories/FileFactory.php";
+require_once "php/model/Image.php";
+require_once "php/factories/ImageFactory.php";
 
 class Facade{
 
