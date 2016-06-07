@@ -31,7 +31,7 @@ if(isset($_SESSION["user"]))
             </label>
         </div>
 
-        <input class="btn btn-lg btn-default btn-block" type="submit" value="Register">
+        <input class="btn btn-lg btn-default btn-block" type="submit" value="Login">
 
     </form>
 
