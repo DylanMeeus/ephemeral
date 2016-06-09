@@ -129,6 +129,8 @@ $(document).ready(function(){
             // On success...
             success: function(data){
 
+                console.log(data);
+
                 // If no image was returned
                 // "not-image" is returned from the PHP script if we return it in case of an error
                 if(data == "not-image"){
