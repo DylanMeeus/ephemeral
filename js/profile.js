@@ -129,8 +129,6 @@ $(document).ready(function(){
             // On success...
             success: function(data){
 
-                console.log(data);
-
                 // If no image was returned
                 // "not-image" is returned from the PHP script if we return it in case of an error
                 if(data == "not-image"){
@@ -198,8 +196,29 @@ $(document).ready(function(){
                     displayResult(div, "Could not modify your Personal Message, see pseud.");
                 }
             }
-        })
-    })
+        });
+    });
+
+    $("#changesignature").submit(function(e){
+        e.preventDefault();
+
+        $.ajax({
+            url: "index.php?action=changesignature",
+            type: "post",
+            data: $(this).serialize(),
+            success: function(ret){
+                console.log($(this).serialize());
+                if(ret){
+                    var div = "#signature-result-positive";
+                    displayResult(div, "Signature successfully changed");
+                    $("#signature").text(ret);
+                }else{
+                    var div = "#signature-result-negative";
+                    displayResult(div, "Could not modify your Signature, see pseud.");
+                }
+            }
+        });
+    });
 
     /**
      * FUNCTIONS

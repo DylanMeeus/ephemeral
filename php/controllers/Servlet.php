@@ -122,6 +122,10 @@ class Servlet{
                 $redirect = $header = $footer = false;
                 $this->setPersonalMessage();
                 break;
+            case "changesignature":
+                $redirect = $header = $footer = false;
+                $this->setSignature();
+                break;
             case "updateuser":
                 $redirect = $header = $footer = false;
                 $this->updateUser();
@@ -353,10 +357,35 @@ class Servlet{
             if($result){
 
                 // Update the session
-                $_SESSION["user"]->setPersonalMessage($personalMessage);
+                $_SESSION["user"] = $updatedUser;
 
                 // Return success message for jQuery
                 echo $_SESSION["user"]->getPersonalMessage();
+            }else{
+                echo 0;
+            }
+        }
+    }
+
+    private function setSignature(){
+
+        if(isset($_POST)){
+
+            $signature = $_POST["sig"];
+
+            // Set up new user object from the session, which we will update and then push to the DB
+            $updatedUser = $this->facade->setUser($_SESSION["user"]->getUserID());
+            $updatedUser->setSignature($signature);
+
+            $result = $this->facade->updateUser($updatedUser);
+
+            if($result){
+
+                // Update the session from the one we have just created & modified
+                $_SESSION["user"] = $updatedUser;
+
+                // Success msg for jQuery to display
+                echo $_SESSION["user"]->getSignature();
             }else{
                 echo 0;
             }
@@ -374,17 +403,5 @@ class Servlet{
 
         // Update the current session with the new data
         $_SESSION["user"] = $userID;
-    }
-
-    // This method updates the database with the session info
-    private function updateUser(){
-
-        if(isset($_SESSION["user"])){
-
-            // Set all of the database info to the info from the session
-            echo $this->facade->updateUser($_SESSION["user"]);
-        }else{
-            return false;
-        }
     }
 }
