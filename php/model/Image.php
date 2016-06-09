@@ -2,7 +2,7 @@
 
 class File{
 
-    public function uploadImage($file){
+    public function uploadFullAvatar($user, $file){
 
         // See if there is already an error
         if(0 < $file["file"]["error"]){
@@ -21,7 +21,7 @@ class File{
             // SIZE LIMIT HERE SOON (TBI)
 
             // Set a name for the image
-            $username = $_SESSION["user"]->getUsername();
+            $username = $user->getUsername();
             $time = time();
             $fileName = "images/profile/$username-$time.jpg";
 
@@ -29,8 +29,8 @@ class File{
             move_uploaded_file($image["tmp_name"], $fileName);
 
             // Now delete the old ones
-            $oldAvatar = $_SESSION["user"]->getAvatar();
-            $oldFullAvatar = $_SESSION["user"]->getFullAvatar();
+            $oldAvatar = $user->getAvatar();
+            $oldFullAvatar = $user->getFullAvatar();
             if(file_exists($oldAvatar)){
                 unlink($oldAvatar);
             }if(file_exists($oldFullAvatar)){
@@ -45,7 +45,7 @@ class File{
         }
     }
 
-    public function uploadProfilePicture($coordString, $imgSrc){
+    public function uploadAvatar($user, $coordString, $imgSrc){
 
         // Target dimensions
         $tarWidth = $tarHeight = 150;
@@ -100,7 +100,7 @@ class File{
         );
 
         // Get the Username from the session
-        $username = $_SESSION["user"]->getUsername();
+        $username = $user->getUsername();
 
         // Set up a new path for the cropped image
         $newPath = "$imgSrc-cropped.jpg";

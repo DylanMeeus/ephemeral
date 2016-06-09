@@ -345,7 +345,9 @@ class Database extends DatabaseConnect{
             }
         }
 
-    public function updateAvatar($username, $imageName){
+    public function updateAvatar($user, $imageName){
+
+        $username = $user->getUsername();
 
         // If image name was returned as "no-work", then send that back to jQuery
         if($imageName == "no-work"){
@@ -381,7 +383,9 @@ class Database extends DatabaseConnect{
         }
     }
 
-    public function updateFullAvatar($username, $imageName){
+    public function updateFullAvatar($user, $imageName){
+
+        $username = $user->getUsername();
 
         // If image name was returned as "not-image", then send that back to jQuery
         if($imageName == "not-image"){
