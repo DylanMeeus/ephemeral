@@ -196,8 +196,29 @@ $(document).ready(function(){
                     displayResult(div, "Could not modify your Personal Message, see pseud.");
                 }
             }
-        })
-    })
+        });
+    });
+
+    $("#changesignature").submit(function(e){
+        e.preventDefault();
+
+        $.ajax({
+            url: "index.php?action=changesignature",
+            type: "post",
+            data: $(this).serialize(),
+            success: function(ret){
+                console.log($(this).serialize());
+                if(ret){
+                    var div = "#signature-result-positive";
+                    displayResult(div, "Signature successfully changed");
+                    $("#signature").text(ret);
+                }else{
+                    var div = "#signature-result-negative";
+                    displayResult(div, "Could not modify your Signature, see pseud.");
+                }
+            }
+        });
+    });
 
     /**
      * FUNCTIONS

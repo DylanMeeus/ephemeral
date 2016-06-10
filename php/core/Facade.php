@@ -58,16 +58,16 @@ class Facade{
 
     public function updateFullAvatar($files){
         return $this->database->updateFullAvatar(
-            $_SESSION["user"]->getUsername(),
-            $this->file->uploadImage($files)
+            $_SESSION["user"],
+            $this->file->uploadFullAvatar($_SESSION["user"], $files)
         );
     }
 
     public function updateAvatar($coordString, $imgSrc){
         return $this->database->updateAvatar(
-            $_SESSION["user"]->getUsername(),
-            $this->file->uploadProfilePicture(
-                $coordString, $imgSrc
+            $_SESSION["user"],
+            $this->file->uploadAvatar(
+                $_SESSION["user"], $coordString, $imgSrc
             )
         );
     }
