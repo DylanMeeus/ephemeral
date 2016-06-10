@@ -1,5 +1,5 @@
 
-shoutCount = 0;
+shoutCount = 0; // total count of the shouts
 
 /**
  * Fetches the data from the shoutbox upon initial load.

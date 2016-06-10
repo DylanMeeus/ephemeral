@@ -16,6 +16,8 @@ class Shoutbox
     // A message contains a user, and content
 
 
+    // store the current count of everything in the database.
+    // upon a new request, check this against the old count.
     private $messages = array();
 
     public function addMessage(ShoutboxMessage $shoutBoxMessage)
