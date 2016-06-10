@@ -6,6 +6,8 @@ if(!defined("SERVLET"))
 require_once "php/data/Database.php";
 require_once "php/factories/DatabaseFactory.php";
 require_once "php/data/Slackdata.php";
+require_once "php/model/Image.php";
+require_once "php/factories/ImageFactory.php";
 
 class Facade{
 
@@ -13,6 +15,8 @@ class Facade{
 
     public function __construct(){
         $this->database = DatabaseFactory::create();
+        $this->file = FileFactory::create();
+
     }
 
     public function registerAccount($username, $password, $email, $firstName, $lastName){
@@ -69,4 +73,37 @@ class Facade{
         }
     }
 
+    public function changePassword($username, $oldPassword, $newPassword){
+        $newPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        return $this->database->changePassword($username, $oldPassword, $newPassword);
+    }
+
+    public function uploadProfilePicture($coordString, $imgSrc){
+        return $this->file->uploadProfilePicture($coordString, $imgSrc);
+    }
+
+    public function updatePersonalMessage($username, $personalMessage){
+        //return $this->database->updatePersonalMessage($username, $personalMessage);
+
+    }
+
+    public function updateFullAvatar($files){
+        return $this->database->updateFullAvatar(
+            $_SESSION["user"]->getUsername(),
+            $this->file->uploadImage($files)
+        );
+    }
+
+    public function updateAvatar($coordString, $imgSrc){
+        return $this->database->updateAvatar(
+            $_SESSION["user"]->getUsername(),
+            $this->file->uploadProfilePicture(
+                $coordString, $imgSrc
+            )
+        );
+    }
+
+    public function updateUser($user){
+        return $this->database->updateUser($user);
+    }
 }
