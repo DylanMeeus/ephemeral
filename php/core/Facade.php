@@ -5,6 +5,7 @@ if(!defined("SERVLET"))
 
 require_once "php/data/Database.php";
 require_once "php/factories/DatabaseFactory.php";
+require_once "php/data/Slackdata.php";
 require_once "php/model/Image.php";
 require_once "php/factories/ImageFactory.php";
 
@@ -40,6 +41,36 @@ class Facade{
 
     public function setUser($userID){
         return $this->database->setUser($userID);
+    }
+
+    // throws exception on error on insert
+    public function postShoutboxMessage($userID, $message)
+    {
+        try
+        {
+            $this->database->postShoutboxMessage($userID,$message);
+            // post to slack
+            DebugHelper::log("testing slackdata");
+            $slackData = new SlackData();
+            $slackData->postToSlack($message);
+        }
+        catch(Exception $ex)
+        {
+            throw new Exception("something went wrong: " . $ex->getMessage());
+        }
+    }
+
+    public function loadShoutbox()
+    {
+        try
+        {
+            return $this->database->loadShoutbox(); // TODO: choose a better name for 'loadShoutbox', surround with try-catch
+        }
+        catch(Exception $ex)
+        {
+            DebugHelper::log("exception: " . $ex->getMessage());
+            echo $ex->getMessage();
+        }
     }
 
     public function changePassword($username, $oldPassword, $newPassword){

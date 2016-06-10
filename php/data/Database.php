@@ -8,6 +8,9 @@ require_once "php/factories/UserFactory.php";
 require_once "php/factories/CookieFactory.php";
 require_once "php/helper/debughelper.php";
 
+require_once "php/core/model/Shoutboxmessage.php";
+require_once "php/core/model/Shoutbox.php";
+
 class Database extends DatabaseConnect{
 
     public function __construct(){
@@ -33,10 +36,8 @@ class Database extends DatabaseConnect{
             }
         }
 
-        // Set up the sql query
         $sql = "SELECT $select FROM users WHERE $column = ?;";
 
-        // Connect to the database
         $this->dbConnect();
 
         // Prepare, bind and execute the query
@@ -45,13 +46,10 @@ class Database extends DatabaseConnect{
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
-        // Collect the results
         $results = $stmt->fetchAll();
 
-        // Disconnect from the DB
         $this->dbDisconnect();
 
-        // Return the results
         return($results);
     }
 
@@ -181,6 +179,8 @@ class Database extends DatabaseConnect{
         // Grab the password from the user if they do, so we can compare it with the entered one. 2 birds, one large rock.
         $userInfo = $this->getUserInfo(0, "username", $username);
 
+        DebugHelper::log($username);
+
         if(empty($userInfo)){
             return "user_not_found";
         }
@@ -282,11 +282,11 @@ class Database extends DatabaseConnect{
             $stmt->bindParam(2, $cookieTypeID);
             $stmt->bindParam(3, $token);
         }
-        
+
         $result = $stmt->execute();
-        
+
         $this->dbDisconnect();
-        
+
         return $result;
     }
 
@@ -308,6 +308,141 @@ class Database extends DatabaseConnect{
 
         // Return the ID
         return !empty($results) ? $results[0]["cookietypeid"] : false;
+    }
+
+
+    public function postShoutboxMessage($userID, $message)
+    {
+        /*  Possibly filter for "message length"
+            Might make a "restrictions / validations class for this
+        */
+        try
+        {
+            $this->dbConnect();
+            $sql = "insert into shoutbox(userid, message) values (?,?);";
+            $statement = $this->con->prepare($sql);
+
+            $statement->bindParam(1,$userID);
+            $statement->bindParam(2,$message);
+
+            $statement->execute();
+        }
+        catch(Exception $ex)
+        {
+            DebugHelper::log($ex->getMessage());
+            throw new Exception("Posting to the shoutbox went wrong: " . $ex->getMessage());
+        }
+        finally
+        {
+            $this->dbDisconnect();
+        }
+    }
+
+    /**
+     * Start with a basic method to load the shoutbox. We don't need *that* much functionality to start with.
+     */
+    public function loadShoutbox()
+    {
+        $shoutBox = new Shoutbox();
+        try
+        {
+
+            $this->dbConnect();
+
+
+            $sql = "SELECT * FROM shoutbox order by shoutid asc limit 10";
+            $sqlCount = "select count(messages) from shoutbox;";
+
+            $statement = $this->con->prepare($sql);
+
+            $statement->setFetchMode(PDO::FETCH_ASSOC);
+            $statement->execute();
+            $results = $statement->fetchAll();
+
+            foreach($results as $res)
+            {
+                $userID = $res['userid'];
+                $user = $this->getUserById($userID); // if the method didn't find a user, it will throw an error
+                $message = $res['message'];         // We do not need to check if "user" is null, the error will stop execution.
+                $shoutMessage = new ShoutboxMessage();
+                $shoutMessage->setUser($user);
+                $shoutMessage->setMessage($message);
+                $shoutBox->addMessage($shoutMessage);
+            }
+        }
+        catch(PDOException $pdoEx)
+        {
+            DebugHelper::log("pdo exception: " . $pdoEx->getMessage());
+            echo $pdoEx->getMessage();
+        }
+        catch(Exception $ex)
+        {
+            DebugHelper::log("in catch: " . $ex->getMessage());
+            echo $ex->getMessage(); // also echo it, in case we are not in production. But this is a doubtful practise.
+        }
+        finally
+        {
+            $this->dbDisconnect();
+        }
+        return $shoutBox;
+    }
+
+
+    /**
+     * Considering we work with Ids, it makes sense to have a private method
+     * that fetches the user information by ID.
+     */
+    private function getUserById($id) // returns a 'User' object.
+    {
+
+        try
+        {
+            $this->dbConnect();
+            $sql = "select * from users where userid = ?";
+            $statement = $this->con->prepare($sql);
+
+            $statement->bindParam(1,$id);
+            $statement->setFetchMode(PDO::FETCH_ASSOC);
+            $statement->execute();
+            $results = $statement->fetchAll();
+
+            // this will only return 1 result, userIDs are unique. Enforcement by the database. (or no result)
+
+            if(!empty($results)) {
+                // fill the user with this information
+                $result = $results[0];
+                $user = new User();
+                //TODO: we need a method for this, as we use it more often.
+                // TODO: Create a builder as well?
+                $user->setUserID($id);
+                $user->setFirstName($result['firstname']);
+                $user->setLastName($result['lastname']);
+                $user->setUsername($result['username']);
+                $user->setEmail($result['email']);
+                $user->setAvatar($result['email']);
+                $user->setRoleID($result['roleid']); // this needs to be replaced with an actual role.
+                $user->setSignature($result['signature']);
+                // we have set the user.
+                $this->dbDisconnect();
+                return $user;
+            }
+            throw new Exception("user not found");
+
+        }
+        catch(PDOException $ex)
+        {
+            DebugHelper::log($ex->getMessage());
+            echo $ex->getMessage();
+        }
+        catch(Exception $ex)
+        {
+            DebugHelper::log($ex->getMessage());
+            echo $ex->getMessage();
+        }
+        finally
+        {
+            $this->dbDisconnect();
+        }
     }
 
     public function changePassword($username, $oldPassword, $newPassword){

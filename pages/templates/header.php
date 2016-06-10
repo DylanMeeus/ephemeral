@@ -33,7 +33,7 @@ if(!defined("SERVLET"))
             <ul class="nav navbar-nav">
                 <li class="<?php echo isset($_GET["action"]) ? "" : "active" ?>"><a href="index.php">Home</a></li>
                 <li class="<?php  ?>"><a href="index.php?action=forum">Forum</a></li>
-                <li class="<?php  ?>"><a href="index.php?action=forum">Shoutbox</a></li>
+                <li class="<?php  ?>"><a href="index.php?action=gotoshoutbox">Shoutbox</a></li>
                 <li class="<?php  ?>"><a href="index.php?action=forum">Members</a></li>
                 <li class="<?php  ?>"><a href="index.php?action=help">Help</a></li>
                 <?php

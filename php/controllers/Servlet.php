@@ -6,6 +6,8 @@ if(!defined("SERVLET"))
 require_once "php/core/Facade.php";
 require_once "php/config/path.php";
 require_once "php/helper/debughelper.php";
+require_once "php/core/model/Shoutbox.php";
+require_once "php/core/model/Shoutboxmessage.php";
 
 class Servlet{
 
@@ -58,6 +60,7 @@ class Servlet{
             }
         }
 
+
         // Page to load, set as nothing to begin with
         $loadPage = "";
 
@@ -102,6 +105,23 @@ class Servlet{
             case "logout":
                 $loadPage = $this->logout();
                 break;
+            case "gotoshoutbox": // just loads the page, does not push any data to it.
+            {
+                $loadPage = "shoutbox.php";
+                break;
+            }
+            case "postshout" : // adds to database
+            {
+                $redirect = false;
+                $this->postShout();
+                break;
+            }
+            case "loadshouts":
+            {
+                $redirect = false;
+                $this->loadShouts();
+                break;
+            }
             case "uploadprofilepicture":
                 $redirect = $header = $footer = false;
                 $this->uploadProfilePicture();
@@ -140,13 +160,22 @@ class Servlet{
          * Preceeding the require like with @ just in-case a mistake is made somewhere at any time - this way loading nothing will just happen without errors
          */
 
-        if ($header) {
-            require_once("pages/templates/header.php");
-        } if($redirect) {
+        if($redirect){
+
+            // the order in which these get called is important.
+            if($header){
+                require_once("pages/templates/header.php");
+            }
+
+
             @require_once("pages/$loadPage");
-        } if ($footer) {
-            require_once("pages/templates/footer.php");
+
+
+            if($footer){
+                require_once("pages/templates/footer.php");
+            }
         }
+
     }
 
 
@@ -168,6 +197,29 @@ class Servlet{
     private function profile(){
         $loadPage = "profile.php";
         return $loadPage;
+    }
+
+    private function loadShouts()
+    {
+        $shoutbox = $this->facade->loadShoutbox();
+        echo $shoutbox->toJsonString();
+
+    }
+
+
+    private function postShout()
+    {
+        $shoutMessage = $_POST['shout'];
+        $userId = $_SESSION["user"]->getUserID();
+        try
+        {
+            $this->facade->postShoutboxMessage($userId, $shoutMessage);
+            echo "done";
+        }
+        catch(Exception $ex)
+        {
+            echo "exception";
+        }
     }
 
     /**
@@ -242,13 +294,11 @@ class Servlet{
         $firstName = $_POST["firstname"];
         $lastName = $_POST["lastname"];
 
-        // Insert the user's account
-        DebugHelper::log("servlet: " . $email . "first: " . $firstName . "last: " . $lastName . "user: " .$username);
 
         $account = $this->facade->registerAccount($username, $password, $email, $firstName, $lastName);
 
         // if something went wrong, we want to redirect the user to the registration page. This way, they can just try again
-        
+
         $loadPage = "registeraccount.php";
         switch($account){
             case "invalid_email":
