@@ -56,6 +56,7 @@ class Facade{
         }
         catch(Exception $ex)
         {
+            DebugHelper::log($ex->getMessage());
             throw new Exception("something went wrong: " . $ex->getMessage());
         }
     }
