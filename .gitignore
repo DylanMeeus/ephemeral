@@ -48,3 +48,4 @@ crashlytics-build.properties
 fabric.properties
 
 php/config/database.php
+php/config/slack.php
