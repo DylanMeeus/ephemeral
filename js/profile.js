@@ -1,5 +1,8 @@
 $(document).ready(function(){
 
+    // Extra scripts
+    $.getScript("js/jsonresponse.js");
+
     /**
      * Globals
      */
@@ -186,14 +189,12 @@ $(document).ready(function(){
             url: "index.php?action=changepersonalmessage",
             type: "post",
             data: $(this).serialize(),
-            success: function(ret){
-                if(ret){
-                    var div = "#pm-result-positive";
-                    displayResult(div, "Personal Message successfully changed");
-                    $("#personal-message").text(ret);
-                }else{
-                    var div = "#pm-result-negative";
-                    displayResult(div, "Could not modify your Personal Message, see pseud.");
+            dataType: "json",
+            success: function(response){
+                if(response){
+                    var resultDiv = "#pm-result";
+                    showResponse(response, resultDiv, "#personal-message");
+                    displayDiv(resultDiv)
                 }
             }
         });
@@ -206,15 +207,11 @@ $(document).ready(function(){
             url: "index.php?action=changesignature",
             type: "post",
             data: $(this).serialize(),
-            success: function(ret){
-                console.log($(this).serialize());
-                if(ret){
-                    var div = "#signature-result-positive";
-                    displayResult(div, "Signature successfully changed");
-                    $("#signature").text(ret);
-                }else{
-                    var div = "#signature-result-negative";
-                    displayResult(div, "Could not modify your Signature, see pseud.");
+            success: function(response){
+                if(response){
+                    var resultDiv = "#signature-result";
+                    showResponse(response, resultDiv, "#signature");
+                    displayDiv(resultDiv);
                 }
             }
         });
@@ -261,6 +258,11 @@ $(document).ready(function(){
     //Function to close the password-result div
     function hideDiv(div){
         $(div).slideUp(500);
+    }
+
+    function displayDiv(div){
+        showDiv(div);
+        setTimeout(function(){hideDiv(div)}, 5000);
     }
 
     //Aaaand function to do everything for us

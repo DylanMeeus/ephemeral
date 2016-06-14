@@ -3,19 +3,22 @@
 if(!defined("SERVLET"))
     die("You may not view this page.");
 
-require_once "php/data/Database.php";
 require_once "php/factories/DatabaseFactory.php";
 require_once "php/data/Slackdata.php";
+require_once "php/data/Database.php";
 require_once "php/model/Image.php";
+require_once "php/core/model/JsonResponse.php";
 require_once "php/factories/ImageFactory.php";
 
 class Facade{
 
-    private $database;
+    private $database, $file, $jsonResponse;
 
     public function __construct(){
+
         $this->database = DatabaseFactory::create();
         $this->file = FileFactory::create();
+        $this->jsonResponse = new JsonResponse();
 
     }
 
@@ -106,5 +109,9 @@ class Facade{
 
     public function updateUser($user){
         return $this->database->updateUser($user);
+    }
+
+    public function generateResponse($success, $messages, $data){
+        return $this->jsonResponse->generateResponse($success, $messages, $data);
     }
 }

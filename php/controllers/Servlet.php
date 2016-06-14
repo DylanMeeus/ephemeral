@@ -410,9 +410,9 @@ class Servlet{
                 $_SESSION["user"] = $updatedUser;
 
                 // Return success message for jQuery
-                echo $_SESSION["user"]->getPersonalMessage();
+                echo $this->facade->generateResponse(true, array("Personal Message successfully changed."), $_SESSION["user"]->getPersonalMessage());
             }else{
-                echo 0;
+                echo $this->facade->generateResponse(false, array("Could not modify your Personal Message, see pseud."), null);
             }
         }
     }
@@ -435,9 +435,9 @@ class Servlet{
                 $_SESSION["user"] = $updatedUser;
 
                 // Success msg for jQuery to display
-                echo $_SESSION["user"]->getSignature();
+                echo $this->facade->generateResponse(true, array("Signature successfully changed."), $_SESSION["user"]->getSignature());
             }else{
-                echo 0;
+                echo $this->facade->generateResponse(false, array("Could not modify your Signature, see pseud."), null);
             }
         }
     }
