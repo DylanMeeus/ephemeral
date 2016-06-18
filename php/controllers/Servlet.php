@@ -265,9 +265,9 @@ class Servlet{
             $this->updateSession();
 
             // Display the results for jQuery
-            echo $results;
+            echo $this->facade->generateResponse(true, "", $results);
         }else{
-            echo "Stuff was not filled in...";
+            echo $this->facade->generateResponse(false, "Stuff was not filled in.", false);
         }
     }
 
@@ -282,7 +282,11 @@ class Servlet{
             $this->updateSession();
 
             // Display the results for jQuery
-            echo $image;
+            if($image == "not-image"){
+                echo $this->facade->generateResponse(false, "not-image", false);
+            }else{
+                echo $this->facade->generateResponse(true, "", $image);
+            }
         }
     }
 

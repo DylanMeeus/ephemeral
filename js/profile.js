@@ -86,13 +86,20 @@ $(document).ready(function(){
                 coordString: $("#coords").text() + $("#coords2").text(),
                 imgSrc: $(profileImage).attr("src")
             },
-            success: function(data){
+            success: function(response){
 
-                if(data == "no-word"){
+                var obj = determineJson(response);
+
+                if(obj.success == false){
+                    alert(obj.messages);
+                    return false;
+                }
+
+                if(obj.data == "no-work") {
                     alert("Can not work with this image type, please try with another image");
                 }else{
 
-                    $("#profile-picture").attr("src", data + "?" + new Date().getTime());
+                    $("#profile-picture").attr("src", obj.data + "?" + new Date().getTime());
 
                     // Hide the modal
                     $("#profile-picture-modal").modal("hide");
@@ -130,11 +137,13 @@ $(document).ready(function(){
             data: formData,
 
             // On success...
-            success: function(data){
+            success: function(response){
+
+                // Manually get the json as we are using an image
+                var obj = determineJson(response);
 
                 // If no image was returned
-                // "not-image" is returned from the PHP script if we return it in case of an error
-                if(data == "not-image"){
+                if(obj.messages == "not-image"){
                     alert("That's not an image, please upload an image file.");
                     return false;
                 }
@@ -144,7 +153,7 @@ $(document).ready(function(){
                 $(profileImage).css("height", "");
 
                 // Else, load the image on to the page so we don't need to reload
-                $(profileImage).attr("src", data);
+                $(profileImage).attr("src", obj.data);
 
                 // Initialise jCrop
                 resetJCrop();

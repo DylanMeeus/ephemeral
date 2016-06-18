@@ -18,7 +18,7 @@ class File{
                 return "not-image";
             }
 
-            // SIZE LIMIT HERE SOON (TBI)
+            // TODO: SIZE LIMIT HERE SOON (TBI)
 
             // Set a name for the image
             $username = $user->getUsername();

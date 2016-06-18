@@ -1,13 +1,7 @@
 function showResponse(resultJson, outputDiv, dataDiv){
 
-    var obj;
     var outputString = "";
-
-    if($.type(resultJson) === "object"){
-        obj = resultJson;
-    }else{
-        obj = $.parseJSON(resultJson);
-    }
+    var obj = determineJson(resultJson);
 
     if(obj.success){
 
@@ -19,20 +13,34 @@ function showResponse(resultJson, outputDiv, dataDiv){
 
     }
 
-    $.each(obj.messages, function (key, value) {
+    if(obj.messages){
 
-        outputString += value + "\n";
+        $.each(obj.messages, function (key, value) {
 
-    });
+            outputString += value + "\n";
+
+        });
+
+    }
 
     if($.type(dataDiv) !== "undefined"){
         if(dataDiv.length > 0){
-            $(dataDiv).html(obj.data);
+            $(dataDiv).html = obj.data;
         }
     }
 
     $(outputDiv).html(outputString);
 
     return true;
+
+}
+
+function determineJson(json){
+
+    if($.type(json) === "object"){
+        return json;
+    }else{
+        return $.parseJSON(json);
+    }
 
 }
