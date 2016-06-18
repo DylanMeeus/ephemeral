@@ -15,15 +15,21 @@ function showResponse(resultJson, outputDiv, dataDiv){
 
     if(obj.messages){
 
-        $.each(obj.messages, function (key, value) {
+        if($.isArray(obj.messages)){
 
-            outputString += value + "\n";
+            $.each(obj.messages, function (key, value) {
 
-        });
+                outputString += value + "\n";
+
+            });
+
+        }else{
+            outputString += obj.messages;
+        }
 
     }
 
-    if($.type(dataDiv) !== "undefined"){
+    if($.type(dataDiv) !== "undefined" && dataDiv != false){
         if(dataDiv.length > 0){
             $(dataDiv).html = obj.data;
         }

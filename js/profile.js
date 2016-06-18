@@ -169,23 +169,24 @@ $(document).ready(function(){
     $('#changepassword').submit(function(e){
         e.preventDefault();
 
+        if($("#newpassword").text() != $("#repeatnewpassword").text()){
+            var div = "#password-result";
+            $(div).addClass("modal-negative-result");
+            $(div).html("Your new passwords do not match, please try again");
+            displayDiv(div);
+        }
+
         $.ajax({
             url: "index.php?action=changepassword",
             type: "post",
             data: $("#changepassword").serialize(),
-            success: function(data){
-                if(data == "password_changed"){
-                    var div = "#password-result";
-                    displayResult(div, "Password changed successfully");
-                }else if(data == "no_password_match"){
-                    var div = "#password-result-negative";
-                    displayResult(div, "Your new passwords do not match");
-                }else if(data == "no_old_password_match"){
-                    var div = "#password-result-negative";
-                    displayResult(div, "Your old password is incorrect, please try again");
-                }else{
-                    alert("Password not changed, please try again.");
-                };
+            success: function(response){
+                console.log(response);
+                if(response){
+                    var resultDiv = "#password-result";
+                    showResponse(response, resultDiv);
+                    displayDiv(resultDiv);
+                }
             }
         });
     });
