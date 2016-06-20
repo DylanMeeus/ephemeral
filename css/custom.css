@@ -41,6 +41,9 @@ body {
     text-align: center;
     display: none;
 }
+.result{
+    white-space: pre;
+}
 .hover-pointer:hover{
     cursor: pointer;
 }

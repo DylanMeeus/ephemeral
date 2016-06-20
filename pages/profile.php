@@ -132,8 +132,7 @@ if(isset($_SESSION["user"])){
                             <input class="btn btn-default btn-primary btn-block" type="submit" value="Change Password">
                         </form>
                     </div>
-                    <div id="password-result" class="modal-positive-result"></div>
-                    <div id="password-result-negative" class="modal-negative-result"></div>
+                    <div id="password-result" class="result"></div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
@@ -186,9 +185,8 @@ if(isset($_SESSION["user"])){
                             <input class="btn btn-default btn-primary btn-block" type="submit" value="Update Personal Message">
                         </form>
                     </div>
-                    <div id="pm-result-positive" class="modal-positive-result"></div>
-                    <div id="pm-result-negative" class="modal-negative-result"></div>
-                    <div class="modal-footer" id="pm-result">
+                    <div id="pm-result" class="result"></div>
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -212,9 +210,8 @@ if(isset($_SESSION["user"])){
                             <input class="btn btn-default btn-primary btn-block" type="submit" value="Update Signature">
                         </form>
                     </div>
-                    <div id="signature-result-positive" class="modal-positive-result"></div>
-                    <div id="signature-result-negative" class="modal-negative-result"></div>
-                    <div class="modal-footer" id="signature-result">
+                    <div id="signature-result" class="result"></div>
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </div>

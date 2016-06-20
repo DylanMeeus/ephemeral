@@ -1,5 +1,8 @@
 $(document).ready(function(){
 
+    // Extra scripts
+    $.getScript("js/jsonresponse.js");
+
     /**
      * Globals
      */
@@ -83,13 +86,20 @@ $(document).ready(function(){
                 coordString: $("#coords").text() + $("#coords2").text(),
                 imgSrc: $(profileImage).attr("src")
             },
-            success: function(data){
+            success: function(response){
 
-                if(data == "no-word"){
+                var obj = determineJson(response);
+
+                if(obj.success == false){
+                    alert(obj.messages);
+                    return false;
+                }
+
+                if(obj.data == "no-work") {
                     alert("Can not work with this image type, please try with another image");
                 }else{
 
-                    $("#profile-picture").attr("src", data + "?" + new Date().getTime());
+                    $("#profile-picture").attr("src", obj.data + "?" + new Date().getTime());
 
                     // Hide the modal
                     $("#profile-picture-modal").modal("hide");
@@ -127,11 +137,13 @@ $(document).ready(function(){
             data: formData,
 
             // On success...
-            success: function(data){
+            success: function(response){
+
+                // Manually get the json as we are using an image
+                var obj = determineJson(response);
 
                 // If no image was returned
-                // "not-image" is returned from the PHP script if we return it in case of an error
-                if(data == "not-image"){
+                if(obj.messages == "not-image"){
                     alert("That's not an image, please upload an image file.");
                     return false;
                 }
@@ -141,7 +153,7 @@ $(document).ready(function(){
                 $(profileImage).css("height", "");
 
                 // Else, load the image on to the page so we don't need to reload
-                $(profileImage).attr("src", data);
+                $(profileImage).attr("src", obj.data);
 
                 // Initialise jCrop
                 resetJCrop();
@@ -157,23 +169,24 @@ $(document).ready(function(){
     $('#changepassword').submit(function(e){
         e.preventDefault();
 
+        if($("#newpassword").text() != $("#repeatnewpassword").text()){
+            var div = "#password-result";
+            $(div).addClass("modal-negative-result");
+            $(div).html("Your new passwords do not match, please try again");
+            displayDiv(div);
+        }
+
         $.ajax({
             url: "index.php?action=changepassword",
             type: "post",
             data: $("#changepassword").serialize(),
-            success: function(data){
-                if(data == "password_changed"){
-                    var div = "#password-result";
-                    displayResult(div, "Password changed successfully");
-                }else if(data == "no_password_match"){
-                    var div = "#password-result-negative";
-                    displayResult(div, "Your new passwords do not match");
-                }else if(data == "no_old_password_match"){
-                    var div = "#password-result-negative";
-                    displayResult(div, "Your old password is incorrect, please try again");
-                }else{
-                    alert("Password not changed, please try again.");
-                };
+            success: function(response){
+                console.log(response);
+                if(response){
+                    var resultDiv = "#password-result";
+                    showResponse(response, resultDiv);
+                    displayDiv(resultDiv);
+                }
             }
         });
     });
@@ -186,14 +199,12 @@ $(document).ready(function(){
             url: "index.php?action=changepersonalmessage",
             type: "post",
             data: $(this).serialize(),
-            success: function(ret){
-                if(ret){
-                    var div = "#pm-result-positive";
-                    displayResult(div, "Personal Message successfully changed");
-                    $("#personal-message").text(ret);
-                }else{
-                    var div = "#pm-result-negative";
-                    displayResult(div, "Could not modify your Personal Message, see pseud.");
+            dataType: "json",
+            success: function(response){
+                if(response){
+                    var resultDiv = "#pm-result";
+                    showResponse(response, resultDiv, "#personal-message");
+                    displayDiv(resultDiv)
                 }
             }
         });
@@ -206,15 +217,11 @@ $(document).ready(function(){
             url: "index.php?action=changesignature",
             type: "post",
             data: $(this).serialize(),
-            success: function(ret){
-                console.log($(this).serialize());
-                if(ret){
-                    var div = "#signature-result-positive";
-                    displayResult(div, "Signature successfully changed");
-                    $("#signature").text(ret);
-                }else{
-                    var div = "#signature-result-negative";
-                    displayResult(div, "Could not modify your Signature, see pseud.");
+            success: function(response){
+                if(response){
+                    var resultDiv = "#signature-result";
+                    showResponse(response, resultDiv, "#signature");
+                    displayDiv(resultDiv);
                 }
             }
         });
@@ -261,6 +268,11 @@ $(document).ready(function(){
     //Function to close the password-result div
     function hideDiv(div){
         $(div).slideUp(500);
+    }
+
+    function displayDiv(div){
+        showDiv(div);
+        setTimeout(function(){hideDiv(div)}, 5000);
     }
 
     //Aaaand function to do everything for us

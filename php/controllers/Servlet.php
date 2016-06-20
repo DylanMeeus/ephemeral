@@ -237,15 +237,34 @@ class Servlet{
             $repeatNewPassword = $_POST["repeatnewpassword"];
 
             if($newPassword != $repeatNewPassword){
-                echo "no_password_match";
+                echo $this->facade->generateResponse(false, "Your new passwords do not match, please try again", false);
                 return false;
             }
 
             $result = $this->facade->changePassword($_SESSION["user"]->getUsername(), $oldPassword, $newPassword);
+            $message = "";
+            $success = false;
 
-            echo $result;
+            switch($result){
+                case "password_changed":
+                    $success = true;
+                    $message = "Password changed successfully";
+                    break;
+                case "no_password_match":
+                    $message = "Your new passwords do not match";
+                    break;
+                case "no_old_password_match":
+                    $message = "Your old password is incorrect, please try again";
+                    break;
+                case false:
+                    $message = "Password not changed, please try again";
+                    break;
+                default:
+                    $message = "Default switch reached...";
+            }
+            echo $this->facade->generateResponse($success, $message, false);
         }else{
-            return false;
+            echo $this->facade->generateResponse(false, "", false);
         }
     }
 
@@ -265,9 +284,9 @@ class Servlet{
             $this->updateSession();
 
             // Display the results for jQuery
-            echo $results;
+            echo $this->facade->generateResponse(true, "", $results);
         }else{
-            echo "Stuff was not filled in...";
+            echo $this->facade->generateResponse(false, "Stuff was not filled in.", false);
         }
     }
 
@@ -282,7 +301,11 @@ class Servlet{
             $this->updateSession();
 
             // Display the results for jQuery
-            echo $image;
+            if($image == "not-image"){
+                echo $this->facade->generateResponse(false, "not-image", false);
+            }else{
+                echo $this->facade->generateResponse(true, "", $image);
+            }
         }
     }
 
@@ -410,9 +433,9 @@ class Servlet{
                 $_SESSION["user"] = $updatedUser;
 
                 // Return success message for jQuery
-                echo $_SESSION["user"]->getPersonalMessage();
+                echo $this->facade->generateResponse(true, array("Personal Message successfully changed."), $_SESSION["user"]->getPersonalMessage());
             }else{
-                echo 0;
+                echo $this->facade->generateResponse(false, array("Could not modify your Personal Message, see pseud."), null);
             }
         }
     }
@@ -435,9 +458,9 @@ class Servlet{
                 $_SESSION["user"] = $updatedUser;
 
                 // Success msg for jQuery to display
-                echo $_SESSION["user"]->getSignature();
+                echo $this->facade->generateResponse(true, array("Signature successfully changed."), $_SESSION["user"]->getSignature());
             }else{
-                echo 0;
+                echo $this->facade->generateResponse(false, array("Could not modify your Signature, see pseud."), null);
             }
         }
     }
