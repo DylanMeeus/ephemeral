@@ -10,6 +10,10 @@ class JsonResponse implements IAjaxResponse{
             return false;
         }
 
+        //$messages = htmlspecialchars($messages);
+        //$data = htmlspecialchars($data);
+        // TODO: Make these safe as they bypass the profile page's default htmlspecialchars outputs (Above commented lines aren't working)
+
         $response = array(
 
             "success" => $success,

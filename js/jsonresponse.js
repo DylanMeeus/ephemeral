@@ -29,10 +29,8 @@ function showResponse(resultJson, outputDiv, dataDiv){
 
     }
 
-    if($.type(dataDiv) !== "undefined" && dataDiv != false){
-        if(dataDiv.length > 0){
-            $(dataDiv).html = obj.data;
-        }
+    if(dataDiv != null && dataDiv != false){
+        $(dataDiv).html(obj.data);
     }
 
     $(outputDiv).html(outputString);
