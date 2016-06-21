@@ -1,7 +1,5 @@
 <?php
 
-require_once "php/helper/debughelper.php";
-
 class File{
 
     public function uploadFullAvatar($user, $file){
