@@ -301,8 +301,10 @@ class Servlet{
             $this->updateSession();
 
             // Display the results for jQuery
-            if($image == "not-image"){
+            if($image == "not-image") {
                 echo $this->facade->generateResponse(false, "not-image", false);
+            }elseif($image == "too-large"){
+                echo $this->facade->generateResponse(false, "too-large", false);
             }else{
                 echo $this->facade->generateResponse(true, "", $image);
             }
