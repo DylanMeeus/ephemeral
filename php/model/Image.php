@@ -18,7 +18,11 @@ class File{
                 return "not-image";
             }
 
-            // TODO: SIZE LIMIT HERE SOON (TBI)
+            $imageFileSize = $image["size"];
+            // If larger than 5MB
+            if($imageFileSize > 5242880){
+                return "too-large";
+            }
 
             // Set a name for the image
             $username = $user->getUsername();
@@ -36,9 +40,6 @@ class File{
             }if(file_exists($oldFullAvatar)){
                 unlink($oldFullAvatar);
             }
-
-            // Update the full avatar column
-            //$this->database->updateFullAvatar($username, $fileName);
 
             // Return the new filename
             return $fileName;

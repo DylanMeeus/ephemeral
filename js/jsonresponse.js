@@ -44,7 +44,7 @@ function determineJson(json){
     if($.type(json) === "object"){
         return json;
     }else{
-        return $.parseJSON(json);
+        return JSON.parse(json);
     }
 
 }

@@ -146,6 +146,9 @@ $(document).ready(function(){
                 if(obj.messages == "not-image"){
                     alert("That's not an image, please upload an image file.");
                     return false;
+                }else if(obj.messages == "too-large"){
+                    alert("This image is too large, please choose an image that is smaller than 5MB.");
+                    return false;
                 }
 
                 // Reset the sizes of the profileImage
